@@ -10,22 +10,19 @@
 
 ---
 
-# Sample Proposal - Pokémon the Trading Card Game
-
-> [!note]
-> This was taken from a project I did in university so the scope is **much** larger than what I'm expecting from you in terms of number of features!
+# D-Rogue Proposal
 
 ## ✒️ Description
 
-In this turn-based battle card game, players assume the role of a Pokémon trainer and use their Pokémon to battle their opponent's Pokémon. Players play Pokémon to the field and attack their opponent's Pokémon. A Pokémon that has sustained enough damage is Knocked Out, and the player who knocked it out draws a Prize card. There are usually six Prize cards, and the primary win condition is to draw all of them. Other ways to win are by knocking out all the Pokémon the opponent has on the field so that the opponent has none left, or if at the beginning of their opponent's turn there are no cards left to draw in the opponent's deck.
+In this Diep.io inspired roguelike game, players will control a little tank that has to defeat many randomly generated enemies from a pool to beat levels. When tanks are killed, the player will gain XP and will be able to level up, leading to the roguelike genre. Players will be able to choose from a pool of different upgrades that will allow them to survive the later rounds. Different levels will lead to a single final battle against The Mothership.
 
 ## 🕹️ Gameplay
 
-Players begin by having one player select heads or tails, and the other flips a coin; the winner of the coin flip will decide who goes first or second. The player going first cannot attack their first turn, unless the card says otherwise. (Dice may be used in place of coins, with even numbers representing heads and odd numbers representing tails). Players then shuffle their decks and draw seven cards, then play one Basic Pokémon onto the field. This Pokémon is known as the Active Pokémon and is usually the one that attacks and receives damage. If a player does not have any Basic Pokémon, they must shuffle and draw a new hand, and the opponent may draw one additional card. Once both players have at least one Basic Pokémon, they can play up to five more Basic Pokémon onto their "Bench" (representing the maximum-carry limit of six from the video games). Players then take the top six cards of their deck and place them to the side as Prize Cards. Play then begins with the player who won the coin flip.
+The game will begin with the player at level 1, each level different enemies will be generated for the players to defeat. Each enemy will award different amounts of XP, which will eventually lead to a level up. When the player levels up, the game will pause and switch to a screen with three different upgrades that they can choose from. Things like increasing bullet damage, bullet speed, reload speed or maybe even elemental damage. This loop will continue until a player reaches a certain level threshold (TBD) and they will be able to level up the tank itself. They can pick the "Twin" upgrade which adds a second cannon to the front of the tank which will make the tank shoot two bullets forward, the "Machine Gun" upgrade, which widens the cannon, leading to reload speed being much higher, the "Sniper" Upgrade which will make the cannon longer, leading to longer reload time, but much more damage and bullet speed and the "Flank Guard" upgrade which adds a cannon on the opposite side of the tank, for the enemies sneaking up on you. Gameplay will then continue normally until players reach level 15, the final level where a bossfight against The Mothership will start. The mothership is a tank with 16 cannons all around it that will shoot periodically that will make a more "Bullet-Hell" type of fight.
 
-Play alternates between players who may take several actions during their turn, including playing new Basic Pokémon, evolving their Pokémon, playing Trainer cards and Energy cards, and using Pokémon Abilities. A player may also retreat their Active Pokémon, switching the Active Pokémon with one on the Bench. At the end of their turn, a player may use one of their Active Pokémon's attacks, provided the prerequisite amount and types of Energy are attached to that Pokémon. Effects from that attack are then activated and damage may be placed on the Defending Pokémon; some attacks simply have effects but do not do damage. Damage may be modified depending on whether the defender has a weakness or a resistance to the attacker's Pokémon type. If the final damage exceeds the defending Pokémon's HP, it is Knocked Out, and the active player takes a prize card and ends their turn.
+Once the player wins / loses, they will be sent back to the main menu (it will look GREAT) where they can either start a new run or look at their run history which is saved between gameplay or restart a previous run if they decided to quit during a run.
 
-This implementation of _Pokémon the Trading Card Game_ is a single player experience with an AI. The game is played primarily with the mouse to interact with the cards and general GUI. The players can optionally hit `M` on their keyboard to mute all game sounds.
+When hitting "ESC" while player, a pause screen will appear allowing the player to resume or save and quit, reloading the run will restart from the start of the level, not from where they were exactly to make save-scumming less impactful.
 
 ## 📃 Requirements
 
