@@ -55,6 +55,7 @@ When hitting "ESC" while player, a pause screen will appear allowing the player 
 ### 🧵 Wireframes
 
 [Wireframes](https://www.figma.com/design/GuaKjhwyGAeuNuaNuoypJ4/Untitled?node-id=0-1)
+
 ### 🎨 Assets
 
 I used [Figma](https://www.figma.com) to create the wireframes. 
@@ -71,18 +72,16 @@ Most Sprites will be taken from these two sprite sheets:
 
 #### ✏️ Fonts
 
-For fonts, a simple sans-serif like Roboto will look quite nice. It's a font that is legible, light on storage size, and fun to keep with the theme we're going for. We also used a more cartoonish Pokemon font for the title screen.
+For fonts, I decided to use the font Ubuntu, as it is the one used by Diep.io, so it leads to a more similar experience to the base game.
 
--   [Pokemon](https://www.dafont.com/pokemon.font)
--   [Roboto](https://fonts.google.com/specimen/Roboto)
+-   [Ubuntu](https://fonts.google.com/specimen/Ubuntu)
 
 #### 🔊 Sounds
 
-All sounds were taken from [freesound.org](https://freesound.org) for the actions pertaining to cards.
+Sounds will be taken from multiple different sources, but mostly on [Youtube](https://www.youtube.com) or different free sound sites.
 
--   [Shuffle cards](https://freesound.org/people/VKProduktion/sounds/217502/)
--   [Flip card](https://freesound.org/people/Splashdust/sounds/84322/)
+(this will be updated as the project is coded.)
 
 ### 📚 References
 
--   [Pokemon Rulebook](http://assets.pokemon.com/assets/cms2/pdf/trading-card-game/rulebook/xy8-rulebook-en.pdf)
+-   [Diep.io](https://www.diep.io)
