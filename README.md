@@ -46,9 +46,6 @@ When hitting "ESC" while player, a pause screen will appear allowing the player 
 
 ### 🤖 State Diagram
 
-> [!note]
-> Remember that you'll need diagrams for not only game states but entity states as well.
-
 ![State Diagram](./assets/images/StateDiagram.png)
 
 ### 🗺️ Class Diagram
@@ -60,16 +57,17 @@ When hitting "ESC" while player, a pause screen will appear allowing the player 
 [Wireframes](https://www.figma.com/design/GuaKjhwyGAeuNuaNuoypJ4/Untitled?node-id=0-1)
 ### 🎨 Assets
 
-We used [app.diagrams.net](https://app.diagrams.net/) to create the wireframes. Wireframes are the equivalent to the skeleton of a web app since they are used to describe the functionality of the product and the users experience.
+I used [Figma](https://www.figma.com) to create the wireframes. 
 
-We plan on following trends already found in other trading card video games, such as Pokémon Trading Card Game Online, Hearthstone, Magic the Gathering Arena, and Gwent.
-
-The GUI will be kept simple and playful, as to make sure the game is easy to understand what each component does and is, as well as light hearted to keep to the Pokémon theme.
+The rest will be heavily inspired / taken from the original game [Diep.io](https://www.diep.io)
 
 #### 🖼️ Images
 
--   Most images will be used from the well known community driven wikipedia site, [Bulbapedia](https://bulbapedia.bulbagarden.net/wiki/Main_Page).
--   Especially their [Trading Card Game section](<https://bulbapedia.bulbagarden.net/wiki/Full_Art_card_(TCG)>).
+Most Sprites will be taken from these two sprite sheets:
+
+![Color Sheet](./assets/images/SpriteSheetFull.png)
+![Player Sheet](./assets/images/SpriteSheetPlayer.jpg)
+
 
 #### ✏️ Fonts
 
