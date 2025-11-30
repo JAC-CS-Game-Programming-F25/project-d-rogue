@@ -43,6 +43,7 @@ When hitting "ESC" while player, a pause screen will appear allowing the player 
 15. Players should be able to augment their tank (twin, machine gun, flank guard and sniper) when reaching a certain XP threshold.
 16. When all enemies are defeated, the player should go to the next stage.
 17. Players should be able to win when The Mothership has been defeated.
+18. Players should be able to have critical hits, which plays an animation on enemy hit.
 
 ### 🤖 State Diagram
 
@@ -69,11 +70,16 @@ Most Sprites will be taken from these two sprite sheets:
 ![Color Sheet](./assets/images/SpriteSheetFull.png)
 ![Player Sheet](./assets/images/SpriteSheetPlayer.jpg)
 
+When the player and enemy shoot bullets, a small animation will play, and if the player gets a critical hit, one of the major smoke/explosions will be played.
+
+![Explosion Sheet](./assets/images/explosions.gif)
+
 
 #### ✏️ Fonts
 
-For fonts, I decided to use the font Ubuntu, as it is the one used by Diep.io, so it leads to a more similar experience to the base game.
+For fonts, I decided to use the font Ubuntu, as it is the one used by Diep.io, so it leads to a more similar experience to the base game and Kung Fu Master for more important text, like boss names and the title screen.
 
+-   [Kung-Fu Master](https://www.fontspace.com/kung-fu-master-font-f61820)
 -   [Ubuntu](https://fonts.google.com/specimen/Ubuntu)
 
 #### 🔊 Sounds
