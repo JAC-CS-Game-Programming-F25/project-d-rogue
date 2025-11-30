@@ -29,16 +29,20 @@ When hitting "ESC" while player, a pause screen will appear allowing the player 
 1. The player should be able to start the game.
 2. The player should be able to move on the map.
 3. The player and enemies should sprites.
-4. The player should be able to shoot bullets
-5. Bullets should be able to move throughout the screen at a constant speed (probably will use matter).
+4. The player and enemies should be able to shoot bullets.
+5. Bullets should be able to move throughout the screen at a constant speed.
 6. Bullets should be deleted when off-screen to avoid lag.
 7. The player should be able to see their health and the enemies health at all times.
 8. Bullets should be able to hit the player and the enemies and be able to affect them.
 9. Player should be able to win / lose.
 10. Player should have a camera follow them so they can traverse the map.
 11. Players should be able to reload their runs so they dont lose them on page exit.
-12. Enemies should be randomly generated to abide to the roguelike genre.
-13. Players should be able to select an upgrade when they reach a certain XP threshold.
+12. When defeated, enemies should give XP to the player so they can level up
+13. Enemies should be randomly generated to abide to the roguelike genre.
+14. Players should be able to select an upgrade when they reach a certain XP threshold.
+15. Players should be able to augment their tank (twin, machine gun, flank guard and sniper) when reaching a certain XP threshold.
+16. When all enemies are defeated, the player should go to the next stage.
+17. Players should be able to win when The Mothership has been defeated.
 
 ### 🤖 State Diagram
 
@@ -53,18 +57,7 @@ When hitting "ESC" while player, a pause screen will appear allowing the player 
 
 ### 🧵 Wireframes
 
-> [!note]
-> Your wireframes don't have to be super polished. They can even be black/white and hand drawn. I'm just looking for a rough idea about what you're visualizing.
-
-![Main Menu](./assets/images/Main-Menu.png)
-
--   _Let's Play_ will navigate to the main game.
--   _Upload Cards_ will navigation to the forms for uploading and parsing the data files for the game.
--   _Change Log_ will navigate the user to a page with a list of features/changes that have been implemented throughout the development of the game.
-
-![Game Board](./assets/images/Game-Board.png)
-
-We want to keep the GUI as simple and clear as possible by having cards with relevant images to act as a way for the user to intuitively navigate the game. We want to implement a layout that would look like as if one were playing a match of the Pokémon Trading Card Game with physical cards in real life. Clicking on any of the cards will reveal that card's details to the player.
+<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="800" height="450" src="https://embed.figma.com/design/GuaKjhwyGAeuNuaNuoypJ4/Untitled?node-id=0-1&embed-host=share" allowfullscreen></iframe>
 
 ### 🎨 Assets
 
