@@ -57,8 +57,7 @@ When hitting "ESC" while player, a pause screen will appear allowing the player 
 
 ### 🧵 Wireframes
 
-[Figma Wireframes →](https://www.figma.com/design/GuaKjhwyGAeuNuaNuoypJ4/Untitled?node-id=0-1)
-
+[Wireframes](https://www.figma.com/design/GuaKjhwyGAeuNuaNuoypJ4/Untitled?node-id=0-1)
 ### 🎨 Assets
 
 We used [app.diagrams.net](https://app.diagrams.net/) to create the wireframes. Wireframes are the equivalent to the skeleton of a web app since they are used to describe the functionality of the product and the users experience.
