@@ -1,11 +1,18 @@
 {
-	"images": [
-
-	],
-	"fonts": [
-
-	],
-	"sounds": [
-		
-	]
+    "images": [
+        {
+            "name": "background",
+            "path": "./assets/images/background.avif",
+            "width": 2000,
+            "height": 2000
+        },
+        {
+            "name": "player_spritesheet",
+            "path": "./assets/images/SpriteSheetPlayer.png",
+            "width": 256,
+            "height": 256
+        }
+    ],
+    "fonts": [],
+    "sounds": []
 }
