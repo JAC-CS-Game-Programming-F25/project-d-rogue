@@ -1,9 +1,18 @@
 import Sprite from "../../lib/Sprite.js";
 import GameEntity from "./GameEntity.js";
-import { images, input } from "../globals.js";
+import {
+    canvas,
+    context,
+    images,
+    input,
+    timer,
+    VIEWPORT_HEIGHT,
+    VIEWPORT_WIDTH,
+} from "../globals.js";
 import ImageName from "../enums/ImageName.js";
 import { PlayerConfig } from "../config/PlayerConfig.js";
 import Input from "../../lib/Input.js";
+import Bullet from "./Bullet.js";
 
 export default class Player extends GameEntity {
     static BASIC_SPRITE = { x: 24, y: 30, width: 68, height: 48 };
@@ -17,13 +26,32 @@ export default class Player extends GameEntity {
             this.dimensions.x,
             this.dimensions.y
         );
+
+        this.attributes = {
+            reloadSpeed: 1,
+            bulletDamage: 10,
+            bulletSpeed: 300,
+            health: 15,
+        };
+
+        this.isShooting = false;
+
+        // Angle of the player and the mouse (in radians)
+        this.angle = 0;
+
+        this.bullets = [];
     }
+
+    damage(dmg) {
+        this.attributes["health"] = this.attributes["health"] - dmg;
+    }
+
     /**
-     * Handles horizontal movement of the player.
-     * This method updates the player's horizontal velocity based on input
+     * Handles movement of the player.
+     * This method updates the player's velocity based on input
      * and applies acceleration, deceleration, and speed limits.
      */
-    handleHorizontalMovement() {
+    handleMovement() {
         if (input.isKeyHeld(Input.KEYS.A) && input.isKeyHeld(Input.KEYS.D)) {
             this.slowDown();
         } else if (input.isKeyHeld(Input.KEYS.A)) {
@@ -43,23 +71,9 @@ export default class Player extends GameEntity {
     }
 
     moveRight() {
-        this.velocity.x = Math.max(
+        this.velocity.x = Math.min(
             this.velocity.x + PlayerConfig.acceleration,
             PlayerConfig.maxSpeed
-        );
-    }
-
-    moveUp() {
-        this.velocity.y = Math.min(
-            this.velocity.y - PlayerConfig.acceleration,
-            PlayerConfig.maxSpeed
-        );
-    }
-
-    moveDown() {
-        this.velocity.y = Math.max(
-            this.velocity.y + PlayerConfig.acceleration,
-            -PlayerConfig.maxSpeed
         );
     }
 
@@ -70,8 +84,51 @@ export default class Player extends GameEntity {
         );
     }
 
+    moveUp() {
+        this.velocity.y = Math.max(
+            this.velocity.y - PlayerConfig.acceleration,
+            -PlayerConfig.maxSpeed
+        );
+    }
+
+    moveDown() {
+        this.velocity.y = Math.min(
+            this.velocity.y + PlayerConfig.acceleration,
+            PlayerConfig.maxSpeed
+        );
+    }
+
+    shoot() {
+        const cx = this.position.x + this.dimensions.x / 2;
+        const cy = this.position.y + this.dimensions.y / 2;
+
+        const muzzleOffset = 40;
+
+        const muzzleX = cx + Math.cos(this.angle) * muzzleOffset;
+        const muzzleY = cy + Math.sin(this.angle) * muzzleOffset;
+
+        if (this.isShooting == false) {
+            this.isShooting = true;
+            this.bullets.push(
+                new Bullet(
+                    muzzleX,
+                    muzzleY,
+                    this.angle,
+                    this.attributes["bulletSpeed"],
+                    "player"
+                )
+            );
+
+            timer.addTask(
+                () => {},
+                1,
+                this.attributes["reloadSpeed"],
+                () => (this.isShooting = false)
+            );
+        }
+    }
+
     slowDown() {
-        console.log();
         if (this.velocity.x > 0) {
             this.velocity.x = Math.max(
                 0,
@@ -122,14 +179,39 @@ export default class Player extends GameEntity {
         // );
 
         // Round vertical position to avoid sub-pixel rendering
-        this.position.y = Math.round(this.position.y);
+        this.position.y = this.position.y;
     }
 
     render() {
-        this.sprites.render(this.position.x, this.position.y);
+        const cx = this.position.x + this.dimensions.x / 2;
+        const cy = this.position.y + this.dimensions.y / 2;
+
+        context.save();
+
+        context.translate(cx, cy);
+
+        context.rotate(this.angle);
+
+        context.translate(-this.dimensions.x / 2, -this.dimensions.y / 2);
+
+        this.sprites.render(0, 0);
+
+        context.restore();
+
+        if (this.bullets != []) {
+            this.bullets.forEach((bullet) => {
+                bullet.render();
+            });
+        }
     }
 
     update(dt) {
+        if (this.bullets != []) {
+            this.bullets.forEach((bullet) => {
+                bullet.update(dt);
+            });
+        }
+
         this.updatePosition(dt);
     }
 }

@@ -11,6 +11,12 @@
             "path": "./assets/images/SpriteSheetPlayer.png",
             "width": 256,
             "height": 256
+        },
+        {
+            "name": "all_spritesheet",
+            "path": "./assets/images/SpriteSheetFull.png",
+            "width": 1080,
+            "height": 1070
         }
     ],
     "fonts": [],

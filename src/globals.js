@@ -13,6 +13,9 @@ export const context =
 export const CANVAS_WIDTH = 2000;
 export const CANVAS_HEIGHT = 2000;
 
+export const VIEWPORT_WIDTH = 800;
+export const VIEWPORT_HEIGHT = 600;
+
 const resizeCanvas = () => {
     const scaleX = window.innerWidth / CANVAS_WIDTH;
     const scaleY = window.innerHeight / CANVAS_HEIGHT;
