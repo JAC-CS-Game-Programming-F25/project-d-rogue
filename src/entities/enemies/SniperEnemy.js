@@ -23,6 +23,7 @@ export default class SniperEnemy extends Enemy {
             movementSpeed: 75,
             stopDistance: 450,
             health: 5,
+            xpValue: 20,
         };
 
         this.isShooting = false;

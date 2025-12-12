@@ -4,6 +4,7 @@ import Sounds from "../lib/Sounds.js";
 import StateMachine from "../lib/StateMachine.js";
 import Timer from "../lib/Timer.js";
 import Input from "../lib/Input.js";
+import StateStack from "../lib/StateStack.js";
 
 export const canvas = document.createElement("canvas");
 export const context =
@@ -33,7 +34,7 @@ resizeCanvas(); // Call once to scale initially
 export const keys = {};
 export const images = new Images(context);
 export const fonts = new Fonts();
-export const stateMachine = new StateMachine();
+export const stateStack = new StateStack();
 export const timer = new Timer();
 export const input = new Input(canvas);
 export const sounds = new Sounds();

@@ -1,19 +1,12 @@
 import Sprite from "../../lib/Sprite.js";
 import GameEntity from "./GameEntity.js";
-import {
-    canvas,
-    context,
-    images,
-    input,
-    timer,
-    VIEWPORT_HEIGHT,
-    VIEWPORT_WIDTH,
-} from "../globals.js";
+import { context, images, input, stateStack, timer } from "../globals.js";
 import ImageName from "../enums/ImageName.js";
 import { PlayerConfig } from "../config/PlayerConfig.js";
 import Input from "../../lib/Input.js";
 import Bullet from "./Bullet.js";
 import ProgressBar from "../elements/ProgressBar.js";
+import GameStateName from "../enums/GameStateName.js";
 
 export default class Player extends GameEntity {
     static BASIC_SPRITE = { x: 24, y: 30, width: 68, height: 48 };
@@ -30,13 +23,17 @@ export default class Player extends GameEntity {
 
         this.attributes = {
             reloadSpeed: 1,
-            bulletDamage: 1,
+            bulletDamage: 2,
             bulletSpeed: 300,
             currentHealth: 15,
             maxHealth: 15,
             movementSpeed: 100,
             critChance: 2,
+            xp: 0,
+            xpThreshold: 30,
         };
+
+        this.level = 1;
 
         this.isShooting = false;
 
@@ -61,6 +58,26 @@ export default class Player extends GameEntity {
             this.attributes["currentHealth"] - dmg;
 
         this.healthBar.displayValue = this.attributes["currentHealth"];
+    }
+
+    gainXP(xp, xpBar) {
+        this.attributes["xp"] = this.attributes["xp"] + xp;
+
+        xpBar.displayValue = this.attributes["xp"];
+
+        if (this.attributes["xp"] >= this.attributes["xpThreshold"]) {
+            this.attributes["xp"] = 0;
+            this.attributes["xpThreshold"] =
+                this.attributes["xpThreshold"] + 30;
+            xpBar.maxValue = this.attributes["xpThreshold"];
+            xpBar.displayValue = this.attributes["xp"];
+
+            this.level += 1;
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -189,7 +206,6 @@ export default class Player extends GameEntity {
         this.healthBar.position.x += dx;
 
         this.healthBar.position.y += dy;
-
         //TODO: Keep player within horizontal map boundaries
         // this.player.position.x = Math.max(
         //     0,

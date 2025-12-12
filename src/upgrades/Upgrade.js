@@ -1,6 +1,9 @@
 export default class Upgrade {
-    constructor(rarity) {
-        this.rarity = rarity;
+    constructor() {
+        this.rarity = "";
+        this.icon = null;
+        this.name = "";
+        this.description = "";
     }
 
     applyEffect() {}

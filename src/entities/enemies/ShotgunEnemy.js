@@ -23,6 +23,7 @@ export default class ShotgunEnemy extends Enemy {
             movementSpeed: 100,
             stopDistance: 200,
             health: 12,
+            xpValue: 15,
         };
 
         this.isShooting = false;

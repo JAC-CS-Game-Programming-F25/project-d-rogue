@@ -23,6 +23,7 @@ export default class BasicEnemy extends Enemy {
             movementSpeed: 150,
             stopDistance: 350,
             health: 8,
+            xpValue: 10,
         };
 
         this.isShooting = false;
