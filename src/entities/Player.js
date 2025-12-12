@@ -13,6 +13,7 @@ import ImageName from "../enums/ImageName.js";
 import { PlayerConfig } from "../config/PlayerConfig.js";
 import Input from "../../lib/Input.js";
 import Bullet from "./Bullet.js";
+import ProgressBar from "../elements/ProgressBar.js";
 
 export default class Player extends GameEntity {
     static BASIC_SPRITE = { x: 24, y: 30, width: 68, height: 48 };
@@ -29,12 +30,25 @@ export default class Player extends GameEntity {
 
         this.attributes = {
             reloadSpeed: 1,
-            bulletDamage: 10,
+            bulletDamage: 1,
             bulletSpeed: 300,
-            health: 15,
+            currentHealth: 15,
+            maxHealth: 15,
+            movementSpeed: 100,
+            critChance: 2,
         };
 
         this.isShooting = false;
+
+        this.healthBar = new ProgressBar(
+            this.position.x - 10,
+            this.position.y + 65,
+            90,
+            10,
+            this.attributes["currentHealth"],
+            this.attributes["currentHealth"],
+            "lightgreen"
+        );
 
         // Angle of the player and the mouse (in radians)
         this.angle = 0;
@@ -43,7 +57,10 @@ export default class Player extends GameEntity {
     }
 
     damage(dmg) {
-        this.attributes["health"] = this.attributes["health"] - dmg;
+        this.attributes["currentHealth"] =
+            this.attributes["currentHealth"] - dmg;
+
+        this.healthBar.displayValue = this.attributes["currentHealth"];
     }
 
     /**
@@ -169,6 +186,10 @@ export default class Player extends GameEntity {
 
         this.position.y += dy;
 
+        this.healthBar.position.x += dx;
+
+        this.healthBar.position.y += dy;
+
         //TODO: Keep player within horizontal map boundaries
         // this.player.position.x = Math.max(
         //     0,
@@ -177,9 +198,6 @@ export default class Player extends GameEntity {
         //         this.player.map.width * Tile.SIZE - this.player.dimensions.x
         //     )
         // );
-
-        // Round vertical position to avoid sub-pixel rendering
-        this.position.y = this.position.y;
     }
 
     render() {
@@ -203,6 +221,8 @@ export default class Player extends GameEntity {
                 bullet.render();
             });
         }
+
+        this.healthBar.render();
     }
 
     update(dt) {

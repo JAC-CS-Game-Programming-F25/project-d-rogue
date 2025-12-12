@@ -61,7 +61,7 @@ export default class PlayState extends State {
     render() {
         this.camera.applyTransform(context);
 
-        this.background.render(0, 0, { x: 3, y: 5 });
+        this.background.render(0, 0, { x: 3, y: 3 });
         this.player.render();
         this.enemies.forEach((enemy) => enemy.render());
 
