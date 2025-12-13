@@ -23,6 +23,6 @@ export default class FreezeShotUpgrade extends Upgrade {
     }
 
     applyEffect(player) {
-        // TODO:
+        player.canFreeze = true;
     }
 }

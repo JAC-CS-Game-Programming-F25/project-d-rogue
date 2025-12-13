@@ -22,6 +22,8 @@ export default class ReloadSpeedUpgrade extends Upgrade {
     }
 
     applyEffect(player) {
-        player.attributes["reloadSpeed"] -= 0.2;
+        if (player.attributes["reloadSpeed"] > 0.2) {
+            player.attributes["reloadSpeed"] -= 0.2;
+        }
     }
 }

@@ -10,8 +10,7 @@ export default class HealthRegenUpgrade extends Upgrade {
         super();
 
         this.rarity = "rare";
-        this.description =
-            "Decrease time before \n health regen starts \n by 1 second.";
+        this.description = "Restore 5 health.";
         this.name = "Regenerator";
         this.icon = new Sprite(
             images.get(ImageName.Player),
@@ -23,6 +22,6 @@ export default class HealthRegenUpgrade extends Upgrade {
     }
 
     applyEffect(player) {
-        // TODO:
+        player.heal(5);
     }
 }

@@ -26,6 +26,7 @@ import GameOverState from "./states/GameOverState.js";
 import VictoryState from "./states/VictoryState.js";
 import TitleScreenState from "./states/TitleScreenState.js";
 import UpgradeState from "./states/UpgradeState.js";
+import AugmentState from "./states/AugmentState.js";
 
 // Set the dimensions of the play area.
 canvas.width = CANVAS_WIDTH;
@@ -47,7 +48,7 @@ images.load(imageDefinitions);
 fonts.load(fontDefinitions);
 sounds.load(soundDefinitions);
 
-// Add all the states to the state machine.
+// Start the game with the PlayState.
 stateStack.push(new PlayState());
 
 const game = new Game(stateStack, context, timer, canvas.width, canvas.height);

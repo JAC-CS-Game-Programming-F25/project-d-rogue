@@ -8,7 +8,7 @@ export default class SniperEnemy extends Enemy {
     constructor(x, y, player) {
         super(x, y, Enemy.SNIPER_SPRITE.width, Enemy.SNIPER_SPRITE.height);
 
-        this.sprites = new Sprite(
+        this.sprite = new Sprite(
             images.get(ImageName.AllSprites),
             Enemy.SNIPER_SPRITE.x,
             Enemy.SNIPER_SPRITE.y,

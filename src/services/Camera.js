@@ -197,4 +197,13 @@ export default class Camera {
             y: this.center.y + this.lookahead.y,
         };
     }
+
+    getBounds() {
+        return {
+            x: this.position.x,
+            y: this.position.y,
+            width: this.viewportWidth * this.scale,
+            height: this.viewportHeight * this.scale,
+        };
+    }
 }

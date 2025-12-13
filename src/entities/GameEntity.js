@@ -6,7 +6,7 @@ export default class GameEntity {
         this.position = new Vector(x, y);
         this.dimensions = new Vector(width, height);
         this.velocity = new Vector(0, 0);
-        this.sprites = {};
+        this.sprite = {};
     }
 
     render() {}

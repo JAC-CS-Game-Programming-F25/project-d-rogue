@@ -1,6 +1,13 @@
 import Sprite from "../../lib/Sprite.js";
 import GameEntity from "./GameEntity.js";
-import { context, images, input, stateStack, timer } from "../globals.js";
+import {
+    CANVAS_WIDTH,
+    context,
+    images,
+    input,
+    stateStack,
+    timer,
+} from "../globals.js";
 import ImageName from "../enums/ImageName.js";
 import { PlayerConfig } from "../config/PlayerConfig.js";
 import Input from "../../lib/Input.js";
@@ -13,7 +20,7 @@ export default class Player extends GameEntity {
 
     constructor(x, y) {
         super(x, y, Player.BASIC_SPRITE.width, Player.BASIC_SPRITE.height);
-        this.sprites = new Sprite(
+        this.sprite = new Sprite(
             images.get(ImageName.Player),
             Player.BASIC_SPRITE.x,
             Player.BASIC_SPRITE.y,
@@ -28,7 +35,7 @@ export default class Player extends GameEntity {
             currentHealth: 15,
             maxHealth: 15,
             movementSpeed: 100,
-            critChance: 2,
+            critChance: 5,
             xp: 0,
             xpThreshold: 30,
         };
@@ -47,15 +54,32 @@ export default class Player extends GameEntity {
             "lightgreen"
         );
 
+        // Player has poison shot / fire shot upgrade
+        this.damageOverTime = false;
+
+        // Player has freeze shot upgrade
+        this.canFreeze = false;
+
         // Angle of the player and the mouse (in radians)
         this.angle = 0;
 
         this.bullets = [];
+
+        this.augment = "Basic";
     }
 
     damage(dmg) {
         this.attributes["currentHealth"] =
             this.attributes["currentHealth"] - dmg;
+
+        this.healthBar.displayValue = this.attributes["currentHealth"];
+    }
+
+    heal(amount) {
+        this.attributes["currentHealth"] = Math.min(
+            this.attributes["maxHealth"],
+            this.attributes["currentHealth"] + amount
+        );
 
         this.healthBar.displayValue = this.attributes["currentHealth"];
     }
@@ -107,46 +131,127 @@ export default class Player extends GameEntity {
     moveRight() {
         this.velocity.x = Math.min(
             this.velocity.x + PlayerConfig.acceleration,
-            PlayerConfig.maxSpeed
+            this.attributes["movementSpeed"]
         );
     }
 
     moveLeft() {
         this.velocity.x = Math.max(
             this.velocity.x - PlayerConfig.acceleration,
-            -PlayerConfig.maxSpeed
+            -this.attributes["movementSpeed"]
         );
     }
 
     moveUp() {
         this.velocity.y = Math.max(
             this.velocity.y - PlayerConfig.acceleration,
-            -PlayerConfig.maxSpeed
+            -this.attributes["movementSpeed"]
         );
     }
 
     moveDown() {
         this.velocity.y = Math.min(
             this.velocity.y + PlayerConfig.acceleration,
-            PlayerConfig.maxSpeed
+            this.attributes["movementSpeed"]
         );
     }
 
-    shoot() {
+    shootBasic() {
         const cx = this.position.x + this.dimensions.x / 2;
         const cy = this.position.y + this.dimensions.y / 2;
 
         const muzzleOffset = 40;
 
+        this.isShooting = true;
+
         const muzzleX = cx + Math.cos(this.angle) * muzzleOffset;
         const muzzleY = cy + Math.sin(this.angle) * muzzleOffset;
 
-        if (this.isShooting == false) {
+        this.bullets.push(
+            new Bullet(
+                muzzleX,
+                muzzleY,
+                this.angle,
+                this.attributes["bulletSpeed"],
+                "player"
+            )
+        );
+
+        timer.addTask(
+            () => {},
+            1,
+            this.attributes["reloadSpeed"],
+            () => (this.isShooting = false)
+        );
+    }
+
+    shootFlankGuard() {
+        const cx = this.position.x + this.dimensions.x / 2;
+        const cy = this.position.y + this.dimensions.y / 2;
+
+        const muzzleOffset = 40;
+
+        const angles = [this.angle, this.angle + Math.PI];
+
+        if (!this.isShooting) {
             this.isShooting = true;
+
+            angles.forEach((angle) => {
+                const muzzleX = cx + Math.cos(angle) * muzzleOffset;
+                const muzzleY = cy + Math.sin(angle) * muzzleOffset;
+
+                this.bullets.push(
+                    new Bullet(
+                        muzzleX,
+                        muzzleY,
+                        angle,
+                        this.attributes["bulletSpeed"],
+                        "player"
+                    )
+                );
+            });
+
+            timer.addTask(
+                () => {},
+                1,
+                this.attributes["reloadSpeed"],
+                () => (this.isShooting = false)
+            );
+        }
+    }
+
+    shootTwin() {
+        const cx = this.position.x + this.dimensions.x / 2;
+        const cy = this.position.y + this.dimensions.y / 2;
+
+        const muzzleOffset = 40; // forward barrel length
+        const barrelSpacing = 25; // distance between barrels
+
+        const fx = Math.cos(this.angle);
+        const fy = Math.sin(this.angle);
+
+        const px = -Math.sin(this.angle);
+        const py = Math.cos(this.angle);
+
+        if (!this.isShooting) {
+            this.isShooting = true;
+
+            // Left barrel
             this.bullets.push(
                 new Bullet(
-                    muzzleX,
-                    muzzleY,
+                    cx + fx * muzzleOffset - px * barrelSpacing,
+                    cy + fy * muzzleOffset - py * barrelSpacing,
+                    this.angle,
+                    this.attributes["bulletSpeed"],
+                    "player"
+                )
+            );
+
+            // Right barrel
+            this.bullets.push(
+                new Bullet(
+                    cx + fx * muzzleOffset + px * barrelSpacing,
+                    cy + fy * muzzleOffset + py * barrelSpacing,
                     this.angle,
                     this.attributes["bulletSpeed"],
                     "player"
@@ -159,6 +264,24 @@ export default class Player extends GameEntity {
                 this.attributes["reloadSpeed"],
                 () => (this.isShooting = false)
             );
+        }
+    }
+
+    shoot() {
+        if (this.isShooting) {
+            return;
+        }
+
+        if (
+            this.augment == "Basic" ||
+            this.augment == "Sniper" ||
+            this.augment == "Machine Gun"
+        ) {
+            this.shootBasic();
+        } else if (this.augment == "Flank Guard") {
+            this.shootFlankGuard();
+        } else if (this.augment == "Twin") {
+            this.shootTwin();
         }
     }
 
@@ -199,6 +322,21 @@ export default class Player extends GameEntity {
         const dx = this.velocity.x * dt;
         const dy = this.velocity.y * dt;
 
+        // boundaries check
+        if (
+            this.position.x + dx < 0 ||
+            this.position.x + this.dimensions.x + dx > CANVAS_WIDTH
+        ) {
+            return;
+        }
+
+        if (
+            this.position.y + dy < 0 ||
+            this.position.y + this.dimensions.y + dy > CANVAS_WIDTH
+        ) {
+            return;
+        }
+
         this.position.x += dx;
 
         this.position.y += dy;
@@ -206,14 +344,6 @@ export default class Player extends GameEntity {
         this.healthBar.position.x += dx;
 
         this.healthBar.position.y += dy;
-        //TODO: Keep player within horizontal map boundaries
-        // this.player.position.x = Math.max(
-        //     0,
-        //     Math.min(
-        //         Math.round(this.player.position.x),
-        //         this.player.map.width * Tile.SIZE - this.player.dimensions.x
-        //     )
-        // );
     }
 
     render() {
@@ -228,7 +358,7 @@ export default class Player extends GameEntity {
 
         context.translate(-this.dimensions.x / 2, -this.dimensions.y / 2);
 
-        this.sprites.render(0, 0);
+        this.sprite.render(0, 0);
 
         context.restore();
 

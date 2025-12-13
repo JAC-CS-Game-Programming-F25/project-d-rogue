@@ -16,7 +16,7 @@ export default class Bullet extends GameEntity {
                 Bullet.ENEMY_BULLET_SPRITE.height
             );
 
-            this.sprites = new Sprite(
+            this.sprite = new Sprite(
                 images.get(ImageName.AllSprites),
                 Bullet.ENEMY_BULLET_SPRITE.x,
                 Bullet.ENEMY_BULLET_SPRITE.y,
@@ -33,7 +33,7 @@ export default class Bullet extends GameEntity {
                 Bullet.PLAYER_BULLET_SPRITE.height
             );
 
-            this.sprites = new Sprite(
+            this.sprite = new Sprite(
                 images.get(ImageName.Player),
                 Bullet.PLAYER_BULLET_SPRITE.x,
                 Bullet.PLAYER_BULLET_SPRITE.y,
@@ -56,6 +56,6 @@ export default class Bullet extends GameEntity {
     }
 
     render() {
-        this.sprites.render(this.position.x, this.position.y);
+        this.sprite.render(this.position.x, this.position.y);
     }
 }

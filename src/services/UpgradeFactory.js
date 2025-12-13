@@ -1,6 +1,7 @@
 import { getRandomPositiveInteger } from "../../lib/Random.js";
 import BulletDamageUpgrade from "../upgrades/BulletDamageUpgrade.js";
 import CriticalChangeUpgrade from "../upgrades/CriticalChanceUpgrade.js";
+import FireShotUpgrade from "../upgrades/FireShotUpgrade.js";
 import FreezeShotUpgrade from "../upgrades/FreezeShotUpgrade.js";
 import HealthRegenUpgrade from "../upgrades/HealthRegenUpgrade.js";
 import MaxHealthUpgrade from "../upgrades/MaxHealthUpgrade.js";
@@ -20,6 +21,7 @@ export default class UpgradeFactory {
             new BulletDamageUpgrade(),
             new HealthRegenUpgrade(),
             new CriticalChangeUpgrade(),
+            new FireShotUpgrade(),
         ];
 
         return [

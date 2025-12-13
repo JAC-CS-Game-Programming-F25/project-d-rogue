@@ -2,7 +2,7 @@ import { roundedRectangle } from "../../lib/Drawing.js";
 import { context } from "../globals.js";
 import UIElement from "./UIElement.js";
 
-export default class Panel extends UIElement {
+export default class UpgradePanel extends UIElement {
     static BOTTOM_DIALOGUE = { x: 0, y: 8, width: 15, height: 3 };
     static TOP_DIALOGUE = { x: 0, y: 0, width: 15, height: 3 };
     static POKEMON_STATS = { x: 7.5, y: 3.5, width: 7, height: 7 };
@@ -38,7 +38,7 @@ export default class Panel extends UIElement {
             this.panelColour = "#87007eff";
             this.fontColour = "white";
         }
-        this.padding = Panel.DEFAULT_PADDING;
+        this.padding = UpgradePanel.DEFAULT_PADDING;
         this.isVisible = true;
         this.upgrade = upgrade;
 
@@ -67,7 +67,7 @@ export default class Panel extends UIElement {
             this.position.y,
             this.dimensions.x,
             this.dimensions.y,
-            Panel.BORDER_WIDTH,
+            UpgradePanel.BORDER_WIDTH,
             true,
             false
         );
@@ -78,7 +78,7 @@ export default class Panel extends UIElement {
         const panelY = this.position.y;
         const panelWidth = this.dimensions.x;
 
-        let cursorY = panelY + Panel.BORDER_WIDTH + this.padding;
+        let cursorY = panelY + UpgradePanel.BORDER_WIDTH + this.padding;
 
         const icon = this.upgrade.icon;
         const scale = 2;
@@ -102,9 +102,9 @@ export default class Panel extends UIElement {
 
         cursorY += 75;
 
-        context.font = `40px ${Panel.FONT_FAMILY}`;
+        context.font = `40px ${UpgradePanel.FONT_FAMILY}`;
 
-        context.font = `50px ${Panel.FONT_FAMILY}`;
+        context.font = `50px ${UpgradePanel.FONT_FAMILY}`;
 
         const descLines = (this.upgrade.description ?? "").split("\n");
 
@@ -122,11 +122,11 @@ export default class Panel extends UIElement {
         context.fillStyle = this.panelColour;
         roundedRectangle(
             context,
-            this.position.x + Panel.BORDER_WIDTH / 2,
-            this.position.y + Panel.BORDER_WIDTH / 2,
-            this.dimensions.x - Panel.BORDER_WIDTH,
-            this.dimensions.y - Panel.BORDER_WIDTH,
-            Panel.BORDER_WIDTH,
+            this.position.x + UpgradePanel.BORDER_WIDTH / 2,
+            this.position.y + UpgradePanel.BORDER_WIDTH / 2,
+            this.dimensions.x - UpgradePanel.BORDER_WIDTH,
+            this.dimensions.y - UpgradePanel.BORDER_WIDTH,
+            UpgradePanel.BORDER_WIDTH,
             true,
             false
         );

@@ -1,7 +1,7 @@
 import Easing from "../../lib/Easing.js";
 import Input from "../../lib/Input.js";
 import State from "../../lib/State.js";
-import Panel from "../elements/Panel.js";
+import UpgradePanel from "../elements/UpgradePanel.js";
 import { CANVAS_WIDTH, context, input, stateStack, timer } from "../globals.js";
 import UpgradeFactory from "../services/UpgradeFactory.js";
 
@@ -13,9 +13,15 @@ export default class UpgradeState extends State {
         this.upgrades = this.generateUpgrades();
 
         this.upgradeBoxes = [
-            new Panel(200, 50, 500, 500, this.upgrades[0]),
-            new Panel(CANVAS_WIDTH / 2 - 250, 50, 500, 500, this.upgrades[1]),
-            new Panel(1300, 50, 500, 500, this.upgrades[2]),
+            new UpgradePanel(200, 50, 500, 500, this.upgrades[0]),
+            new UpgradePanel(
+                CANVAS_WIDTH / 2 - 250,
+                50,
+                500,
+                500,
+                this.upgrades[1]
+            ),
+            new UpgradePanel(1300, 50, 500, 500, this.upgrades[2]),
         ];
 
         this.selectedIndex = 0;

@@ -8,7 +8,7 @@ export default class BasicEnemy extends Enemy {
     constructor(x, y, player) {
         super(x, y, Enemy.BASIC_SPRITE.width, Enemy.BASIC_SPRITE.height);
 
-        this.sprites = new Sprite(
+        this.sprite = new Sprite(
             images.get(ImageName.AllSprites),
             Enemy.BASIC_SPRITE.x,
             Enemy.BASIC_SPRITE.y,

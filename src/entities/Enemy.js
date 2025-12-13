@@ -1,6 +1,12 @@
 import Sprite from "../../lib/Sprite.js";
 import GameEntity from "./GameEntity.js";
-import { context, images, timer } from "../globals.js";
+import {
+    CANVAS_HEIGHT,
+    CANVAS_WIDTH,
+    context,
+    images,
+    timer,
+} from "../globals.js";
 import ImageName from "../enums/ImageName.js";
 import BasicEnemy from "./enemies/BasicEnemy.js";
 import Bullet from "./Bullet.js";
@@ -19,52 +25,54 @@ export default class Enemy extends GameEntity {
         this.attributes = {};
 
         this.healthBar = {};
+
+        this.istakingOverTimeDamage = false;
     }
 
     moveAI(dt) {
-        // Get center of enemy
-        const enemycenterx = this.position.x + this.dimensions.x / 2;
-        const enemycentery = this.position.y + this.dimensions.y / 2;
+        const healtbarYOffset = 40;
 
-        // Get center of player
-        const playercenterx =
+        const enemyCenterX = this.position.x + this.dimensions.x / 2;
+        const enemyCenterY = this.position.y + this.dimensions.y / 2;
+
+        const playerCenterX =
             this.player.position.x + this.player.dimensions.x / 2;
-        const playercentery =
+        const playerCenterY =
             this.player.position.y + this.player.dimensions.y / 2;
 
-        const dx = playercenterx - enemycenterx;
-        const dy = playercentery - enemycentery;
+        const dx = playerCenterX - enemyCenterX;
+        const dy = playerCenterY - enemyCenterY;
 
-        // Distance to player
         const distance = Math.hypot(dx, dy);
 
-        // Normalize direction
-        const normalizedx = dx / distance;
-        const normalizedy = dy / distance;
+        if (distance == 0) return;
 
-        // Stop if within range
+        const nx = dx / distance;
+        const ny = dy / distance;
+
+        const speed = this.attributes["movementSpeed"] * dt;
+
         if (distance <= this.attributes["stopDistance"]) {
-            // Move enemy
-            this.position.x -=
-                normalizedx * this.attributes["movementSpeed"] * dt;
-            this.position.y -=
-                normalizedy * this.attributes["movementSpeed"] * dt;
-
-            this.healthBar.position.x -=
-                normalizedx * this.attributes["movementSpeed"] * dt;
-            this.healthBar.position.y -=
-                normalizedy * this.attributes["movementSpeed"] * dt;
+            this.position.x -= nx * speed;
+            this.position.y -= ny * speed;
         } else {
-            // Move enemy
-            this.position.x +=
-                normalizedx * this.attributes["movementSpeed"] * dt;
-            this.position.y +=
-                normalizedy * this.attributes["movementSpeed"] * dt;
-            this.healthBar.position.x +=
-                normalizedx * this.attributes["movementSpeed"] * dt;
-            this.healthBar.position.y +=
-                normalizedy * this.attributes["movementSpeed"] * dt;
+            this.position.x += nx * speed;
+            this.position.y += ny * speed;
         }
+
+        // Clamp enemy inside screen
+        this.position.x = Math.max(
+            0,
+            Math.min(CANVAS_WIDTH - this.dimensions.x, this.position.x)
+        );
+        this.position.y = Math.max(
+            0,
+            Math.min(CANVAS_HEIGHT - this.dimensions.y, this.position.y)
+        );
+
+        this.healthBar.position.x = this.position.x;
+        this.healthBar.position.y =
+            this.position.y + this.dimensions.y + healtbarYOffset;
     }
 
     render() {
@@ -79,7 +87,7 @@ export default class Enemy extends GameEntity {
 
         context.translate(-this.dimensions.x / 2, -this.dimensions.y / 2);
 
-        this.sprites.render(0, 0, { x: 2, y: 2 });
+        this.sprite.render(0, 0, { x: 2, y: 2 });
 
         context.restore();
 

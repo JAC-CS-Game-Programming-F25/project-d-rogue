@@ -8,7 +8,7 @@ export default class ShotgunEnemy extends Enemy {
     constructor(x, y, player) {
         super(x, y, Enemy.SHOTGUN_SPRITE.width, Enemy.SHOTGUN_SPRITE.height);
 
-        this.sprites = new Sprite(
+        this.sprite = new Sprite(
             images.get(ImageName.AllSprites),
             Enemy.SHOTGUN_SPRITE.x,
             Enemy.SHOTGUN_SPRITE.y,
