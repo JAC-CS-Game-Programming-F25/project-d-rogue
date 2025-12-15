@@ -49,7 +49,7 @@ fonts.load(fontDefinitions);
 sounds.load(soundDefinitions);
 
 // Start the game with the PlayState.
-stateStack.push(new PlayState());
+stateStack.push(new TitleScreenState());
 
 const game = new Game(stateStack, context, timer, canvas.width, canvas.height);
 

@@ -1,12 +1,6 @@
 {
     "images": [
         {
-            "name": "background",
-            "path": "./assets/images/background.avif",
-            "width": 2000,
-            "height": 2000
-        },
-        {
             "name": "player_spritesheet",
             "path": "./assets/images/SpriteSheetPlayer.png",
             "width": 256,
@@ -17,8 +11,72 @@
             "path": "./assets/images/SpriteSheetFull.png",
             "width": 1080,
             "height": 1070
+        },
+        {
+            "name": "main_menu",
+            "path": "./assets/images/mainmenu.jpg",
+            "width": 2000,
+            "height": 2000
+        },
+        {
+            "name": "grand_prize",
+            "path": "./assets/images/grandprize.jpg",
+            "width": 225,
+            "height": 225
+        },
+        {
+            "name": "explosion_sheet",
+            "path": "./assets/images/ExplosionSheet.png",
+            "width": 704,
+            "height": 960
         }
     ],
-    "fonts": [],
-    "sounds": []
+    "fonts": [
+        {
+            "name": "Ubuntu",
+            "path": "./assets/fonts/Ubuntu-Bold.ttf"
+        },
+        {
+            "name": "Kungfu",
+            "path": "./assets/fonts/kungfu.otf"
+        }
+    ],
+    "sounds": [
+        {
+            "name": "hit",
+            "path": "./assets/sounds/hit.mp3",
+            "size": 2,
+            "volume": 1
+        },
+        {
+            "name": "cursor",
+            "path": "./assets/sounds/cursor.mp3",
+            "size": 2,
+            "volume": 1
+        },
+        {
+            "name": "level_up",
+            "path": "./assets/sounds/levelup.mp3",
+            "size": 2,
+            "volume": 1
+        },
+        {
+            "name": "selection",
+            "path": "./assets/sounds/selection.mp3",
+            "size": 2,
+            "volume": 1
+        },
+        {
+            "name": "augment",
+            "path": "./assets/sounds/augment.mp3",
+            "size": 2,
+            "volume": 1
+        },
+        {
+            "name": "victory",
+            "path": "./assets/sounds/victory.mp3",
+            "size": 2,
+            "volume": 1
+        }
+    ]
 }

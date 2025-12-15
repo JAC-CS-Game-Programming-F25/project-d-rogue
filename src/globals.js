@@ -31,6 +31,9 @@ window.addEventListener("resize", resizeCanvas);
 
 resizeCanvas(); // Call once to scale initially
 
+export const saveState = {
+    loadData: false,
+};
 export const keys = {};
 export const images = new Images(context);
 export const fonts = new Fonts();

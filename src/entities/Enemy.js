@@ -8,14 +8,24 @@ import {
     timer,
 } from "../globals.js";
 import ImageName from "../enums/ImageName.js";
-import BasicEnemy from "./enemies/BasicEnemy.js";
 import Bullet from "./Bullet.js";
 import ProgressBar from "../elements/ProgressBar.js";
+import Easing from "../../lib/Easing.js";
+import Animation from "../../lib/Animation.js";
 
 export default class Enemy extends GameEntity {
     static BASIC_SPRITE = { x: 40, y: 890, width: 38, height: 27 };
     static SHOTGUN_SPRITE = { x: 379, y: 896, width: 38, height: 27 };
     static SNIPER_SPRITE = { x: 429, y: 982, width: 44, height: 27 };
+
+    static EXPLOSION_ANIMATION = [
+        { x: 24, y: 411, width: 13, height: 12 },
+        { x: 84, y: 407, width: 23, height: 23 },
+        { x: 143, y: 404, width: 32, height: 29 },
+        { x: 206, y: 404, width: 34, height: 30 },
+        { x: 269, y: 404, width: 36, height: 32 },
+        { x: 396, y: 403, width: 36, height: 29 },
+    ];
 
     constructor(x, y, w, h) {
         super(x, y, w, h);
@@ -27,6 +37,25 @@ export default class Enemy extends GameEntity {
         this.healthBar = {};
 
         this.istakingOverTimeDamage = false;
+
+        this.isDead = false;
+
+        this.gotCrit = false;
+
+        this.critAnimation = new Animation(
+            Enemy.EXPLOSION_ANIMATION.map(
+                (frame) =>
+                    new Sprite(
+                        images.get(ImageName.ExplosionSheet),
+                        frame.x,
+                        frame.y,
+                        frame.width,
+                        frame.height
+                    )
+            ),
+            0.1,
+            1
+        );
     }
 
     moveAI(dt) {
@@ -91,13 +120,27 @@ export default class Enemy extends GameEntity {
 
         context.restore();
 
-        if (this.bullets != []) {
+        if (this.bullets.length > 0) {
             this.bullets.forEach((bullet) => {
                 bullet.render();
             });
         }
 
         this.healthBar.render();
+
+        if (this.gotCrit) {
+            const currentFrame = this.critAnimation.getCurrentFrame();
+
+            currentFrame.render(
+                this.position.x +
+                    this.dimensions.x / 2 -
+                    currentFrame.width / 2,
+                this.position.y +
+                    this.dimensions.y / 2 -
+                    currentFrame.height / 2,
+                { x: 2, y: 2 }
+            );
+        }
     }
 
     update(dt) {
@@ -112,17 +155,33 @@ export default class Enemy extends GameEntity {
             this.shoot();
         }
 
-        if (this.bullets != []) {
+        if (this.bullets.length > 0) {
             this.bullets.forEach((bullet) => {
                 bullet.update(dt);
             });
         }
+
+        if (this.gotCrit) {
+            this.critAnimation.update(dt);
+
+            if (this.critAnimation.isDone()) {
+                this.critAnimation.refresh();
+                this.gotCrit = false;
+            }
+        }
     }
 
     damage(dmg) {
-        this.attributes["health"] = this.attributes["health"] - dmg;
+        this.attributes["health"] -= dmg;
 
-        this.healthBar.displayValue = this.attributes["health"];
+        this.healthBar.currentValue = this.attributes["health"];
+
+        timer.tween(
+            this.healthBar,
+            { displayValue: this.healthBar.currentValue },
+            0.5,
+            Easing.easeOutQuad
+        );
     }
 
     shoot() {

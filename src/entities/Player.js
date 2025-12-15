@@ -14,6 +14,8 @@ import Input from "../../lib/Input.js";
 import Bullet from "./Bullet.js";
 import ProgressBar from "../elements/ProgressBar.js";
 import GameStateName from "../enums/GameStateName.js";
+import Easing from "../../lib/Easing.js";
+import Animation from "../../lib/Animation.js";
 
 export default class Player extends GameEntity {
     static BASIC_SPRITE = { x: 24, y: 30, width: 68, height: 48 };
@@ -30,7 +32,7 @@ export default class Player extends GameEntity {
 
         this.attributes = {
             reloadSpeed: 1,
-            bulletDamage: 2,
+            bulletDamage: 20,
             bulletSpeed: 300,
             currentHealth: 15,
             maxHealth: 15,
@@ -69,10 +71,16 @@ export default class Player extends GameEntity {
     }
 
     damage(dmg) {
-        this.attributes["currentHealth"] =
-            this.attributes["currentHealth"] - dmg;
+        this.attributes["currentHealth"] -= dmg;
 
-        this.healthBar.displayValue = this.attributes["currentHealth"];
+        this.healthBar.currentValue = this.attributes["currentHealth"];
+
+        timer.tween(
+            this.healthBar,
+            { displayValue: this.healthBar.currentValue },
+            0.5,
+            Easing.easeOutQuad
+        );
     }
 
     heal(amount) {
@@ -81,23 +89,44 @@ export default class Player extends GameEntity {
             this.attributes["currentHealth"] + amount
         );
 
-        this.healthBar.displayValue = this.attributes["currentHealth"];
+        this.healthBar.currentValue = this.attributes["currentHealth"];
+
+        timer.tween(
+            this.healthBar,
+            { displayValue: this.healthBar.currentValue },
+            0.5,
+            Easing.easeOutQuad
+        );
     }
 
     gainXP(xp, xpBar) {
-        this.attributes["xp"] = this.attributes["xp"] + xp;
+        // Add XP
+        this.attributes["xp"] += xp;
 
-        xpBar.displayValue = this.attributes["xp"];
+        // Update the ProgressBar's logical value
+        xpBar.currentValue = this.attributes["xp"];
 
+        // Tween the displayValue to match the current XP
+        timer.tween(
+            xpBar,
+            { displayValue: xpBar.currentValue },
+            0.4,
+            Easing.easeOutQuad
+        );
+
+        // Handle level up
         if (this.attributes["xp"] >= this.attributes["xpThreshold"]) {
-            this.attributes["xp"] = 0;
-            this.attributes["xpThreshold"] =
-                this.attributes["xpThreshold"] + 30;
+            this.attributes["xp"] = 0; // reset XP
+            xpBar.currentValue = 0; // reset logical bar value
+
+            // Increase threshold
+            this.attributes["xpThreshold"] += 30;
             xpBar.maxValue = this.attributes["xpThreshold"];
-            xpBar.displayValue = this.attributes["xp"];
 
-            this.level += 1;
+            // Tween the displayValue down to 0 (smoothly empty the bar)
+            timer.tween(xpBar, { displayValue: 0 }, 0.3, Easing.easeOutQuad);
 
+            this.level += 1; // increase player level
             return true;
         }
 
@@ -362,7 +391,7 @@ export default class Player extends GameEntity {
 
         context.restore();
 
-        if (this.bullets != []) {
+        if (this.bullets.length > 0) {
             this.bullets.forEach((bullet) => {
                 bullet.render();
             });
@@ -372,7 +401,7 @@ export default class Player extends GameEntity {
     }
 
     update(dt) {
-        if (this.bullets != []) {
+        if (this.bullets.length > 0) {
             this.bullets.forEach((bullet) => {
                 bullet.update(dt);
             });

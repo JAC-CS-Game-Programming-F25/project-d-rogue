@@ -2,7 +2,15 @@ import Easing from "../../lib/Easing.js";
 import Input from "../../lib/Input.js";
 import State from "../../lib/State.js";
 import UpgradePanel from "../elements/UpgradePanel.js";
-import { CANVAS_WIDTH, context, input, stateStack, timer } from "../globals.js";
+import { SoundName } from "../enums/SoundName.js";
+import {
+    CANVAS_WIDTH,
+    context,
+    input,
+    sounds,
+    stateStack,
+    timer,
+} from "../globals.js";
 import UpgradeFactory from "../services/UpgradeFactory.js";
 
 export default class UpgradeState extends State {
@@ -68,6 +76,8 @@ export default class UpgradeState extends State {
             if (this.selectedIndex < 0) {
                 this.selectedIndex = this.upgradeBoxes.length - 1;
             }
+
+            sounds.play(SoundName.Cursor);
         }
 
         if (input.isKeyPressed(Input.KEYS.D)) {
@@ -75,6 +85,7 @@ export default class UpgradeState extends State {
             if (this.selectedIndex > this.upgradeBoxes.length - 1) {
                 this.selectedIndex = 0;
             }
+            sounds.play(SoundName.Cursor);
         }
     }
 
@@ -89,10 +100,13 @@ export default class UpgradeState extends State {
             const selectedUpgrade = this.upgrades[this.selectedIndex];
             selectedUpgrade.applyEffect(this.player);
             stateStack.pop();
+
+            sounds.play(SoundName.Selection);
         }
     }
 
     render() {
+        context.save();
         context.fillStyle = "grey";
         context.globalAlpha = 0.7;
         context.fillRect(0, 0, context.canvas.width, context.canvas.height);
@@ -101,5 +115,6 @@ export default class UpgradeState extends State {
 
         this.upgradeBoxes.forEach((box) => box.render());
         this.renderCursor();
+        context.restore();
     }
 }

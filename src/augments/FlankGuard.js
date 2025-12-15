@@ -23,9 +23,13 @@ export default class FlankGuard extends Augment {
     }
 
     applyEffect(player) {
+        // change player sprite
         player.sprite = this.image;
+        // change player dimensions
         player.dimensions.width = FlankGuard.FLANKGUARD_SPRITE.width;
         player.dimensions.height = FlankGuard.FLANKGUARD_SPRITE.height;
+
+        // change augment name for shooting
         player.augment = this.name;
     }
 }

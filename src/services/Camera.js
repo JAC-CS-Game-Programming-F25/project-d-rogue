@@ -17,6 +17,7 @@ export default class Camera {
      * @param {number} viewportHeight - The height of the game viewport in pixels.
      * @param {number} worldWidth - The total width of the game world in pixels.
      * @param {number} worldHeight - The total height of the game world in pixels.
+     * @param {number} scale - The scale which the camera should "zoom".
      */
     constructor(
         player,
@@ -100,7 +101,7 @@ export default class Camera {
 
         // Calculate the player's speed ratio (current speed / max speed)
         const playerSpeedX = Math.abs(this.player.velocity.x);
-        const maxSpeedX = PlayerConfig.maxSpeed;
+        const maxSpeedX = this.player.attributes["movementSpeed"];
         const speedRatioX = Math.min(playerSpeedX / maxSpeedX, 1);
 
         // Calculate target horizontal lookahead based on player's movement
@@ -108,17 +109,14 @@ export default class Camera {
             ? CameraSettings.lookahead * speedRatioX * currentDirectionX
             : 0;
 
-        // Calculate vertical camera adjustment
         let verticalAdjustment = 0;
+        // Calculate vertical camera adjustment
         verticalAdjustment = playerCenter.y - this.lastGroundedY;
 
         // Calculate target camera position
         const target = new Vector(
             playerCenter.x + targetLookaheadX - this.center.x,
-            this.lastGroundedY +
-                verticalAdjustment +
-                this.targetLookaheadY -
-                this.center.y
+            playerCenter.y + this.targetLookaheadY - this.center.y
         );
 
         if (CameraSettings.damping > 0) {

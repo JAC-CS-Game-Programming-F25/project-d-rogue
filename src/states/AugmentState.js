@@ -6,7 +6,8 @@ import MachineGun from "../augments/MachineGun.js";
 import Sniper from "../augments/Sniper.js";
 import Twin from "../augments/Twin.js";
 import AugmentPanel from "../elements/AugmentPanel.js";
-import { context, input, stateStack, timer } from "../globals.js";
+import { SoundName } from "../enums/SoundName.js";
+import { context, input, sounds, stateStack, timer } from "../globals.js";
 
 export default class AugmentState extends State {
     constructor(player) {
@@ -63,7 +64,6 @@ export default class AugmentState extends State {
         const canvasW = context.canvas.width;
         const canvasH = context.canvas.height;
 
-        // GAP between panels
         const gap = 100;
 
         // Compute total grid width/height
@@ -121,6 +121,7 @@ export default class AugmentState extends State {
             if (this.selectedIndex < 0) {
                 this.selectedIndex = this.augmentBoxes.length - 1;
             }
+            sounds.play(SoundName.Cursor);
         }
 
         if (input.isKeyPressed(Input.KEYS.D)) {
@@ -128,6 +129,7 @@ export default class AugmentState extends State {
             if (this.selectedIndex > this.augmentBoxes.length - 1) {
                 this.selectedIndex = 0;
             }
+            sounds.play(SoundName.Cursor);
         }
     }
 
@@ -138,6 +140,7 @@ export default class AugmentState extends State {
             const selectedAugment = this.augments[this.selectedIndex];
             selectedAugment.applyEffect(this.player);
             stateStack.pop();
+            sounds.play(SoundName.Selection);
         }
     }
 
@@ -146,6 +149,7 @@ export default class AugmentState extends State {
     }
 
     render() {
+        context.save();
         context.fillStyle = "grey";
         context.globalAlpha = 0.7;
         context.fillRect(0, 0, context.canvas.width, context.canvas.height);
@@ -154,5 +158,6 @@ export default class AugmentState extends State {
 
         this.augmentBoxes.forEach((box) => box.render());
         this.renderCursor();
+        context.restore();
     }
 }

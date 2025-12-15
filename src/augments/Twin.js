@@ -1,4 +1,5 @@
 import Sprite from "../../lib/Sprite.js";
+import { AugmentName } from "../enums/AugmentName.js";
 import ImageName from "../enums/ImageName.js";
 import { images } from "../globals.js";
 import Augment from "./Augment.js";
@@ -12,7 +13,7 @@ export default class Twin extends Augment {
     };
     constructor() {
         super();
-        this.name = "Twin";
+        this.name = AugmentName.Twin;
         this.image = new Sprite(
             images.get(ImageName.Player),
             Twin.TWIN_SPRITE.x,

@@ -1,10 +1,11 @@
 import BasicEnemy from "../entities/enemies/BasicEnemy.js";
+import Mothership from "../entities/enemies/Mothership.js";
 import ShotgunEnemy from "../entities/enemies/ShotgunEnemy.js";
 import SniperEnemy from "../entities/enemies/SniperEnemy.js";
 
 export default class LevelMaker {
-    static GetNextLevel(level, player) {
-        switch (level) {
+    static GetNextStage(stage, player) {
+        switch (stage) {
             case 1:
                 return [new BasicEnemy(25, 100, player)];
             case 2:
@@ -71,8 +72,7 @@ export default class LevelMaker {
                     new BasicEnemy(900, 100, player),
                 ];
             case 15:
-                // TODO: MOTHERSHIP
-                break;
+                return [new Mothership(500, 500, player)];
         }
     }
 }

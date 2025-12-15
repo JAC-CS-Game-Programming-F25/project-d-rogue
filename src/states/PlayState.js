@@ -1,10 +1,18 @@
+import Input from "../../lib/Input.js";
 import { getRandomPositiveInteger, oneInXChance } from "../../lib/Random.js";
 import Sprite from "../../lib/Sprite.js";
 import State from "../../lib/State.js";
+import FlankGuard from "../augments/FlankGuard.js";
+import MachineGun from "../augments/MachineGun.js";
+import Sniper from "../augments/Sniper.js";
+import Twin from "../augments/Twin.js";
 import ProgressBar from "../elements/ProgressBar.js";
+import Mothership from "../entities/enemies/Mothership.js";
 import Player from "../entities/Player.js";
+import { AugmentName } from "../enums/AugmentName.js";
 import GameStateName from "../enums/GameStateName.js";
 import ImageName from "../enums/ImageName.js";
+import { SoundName } from "../enums/SoundName.js";
 import {
     CANVAS_HEIGHT,
     CANVAS_WIDTH,
@@ -14,11 +22,18 @@ import {
     VIEWPORT_HEIGHT,
     stateStack,
     timer,
+    input,
+    saveState,
+    sounds,
 } from "../globals.js";
 import Camera from "../services/Camera.js";
 import LevelMaker from "../services/LevelMaker.js";
 import AugmentState from "./AugmentState.js";
+import GameOverState from "./GameOverState.js";
+import PauseState from "./PauseState.js";
+import PauseStates from "./PauseState.js";
 import UpgradeState from "./UpgradeState.js";
+import VictoryState from "./VictoryState.js";
 
 export default class PlayState extends State {
     constructor() {
@@ -26,14 +41,18 @@ export default class PlayState extends State {
 
         this.scale = 2;
 
-        this.stage = 1;
+        this.stage = 13;
 
         this.player = new Player(
             VIEWPORT_WIDTH / 2 - Player.BASIC_SPRITE.width / 2,
             VIEWPORT_HEIGHT / 2 - Player.BASIC_SPRITE.height / 2
         );
 
-        this.enemies = LevelMaker.GetNextLevel(this.stage, this.player);
+        if (saveState.loadData) {
+            this.loadSavefile();
+        }
+
+        this.enemies = LevelMaker.GetNextStage(this.stage, this.player);
 
         this.xpBar = new ProgressBar(
             this.player.position.x - 100,
@@ -61,13 +80,20 @@ export default class PlayState extends State {
             CANVAS_WIDTH,
             CANVAS_HEIGHT
         );
+
+        this.isBossLevel = false;
     }
 
     update(dt) {
+        if (input.isKeyPressed(Input.KEYS.ESCAPE)) {
+            stateStack.push(new PauseState(this.player, this));
+        }
+
         this.player.handleMovement();
         this.checkCollisions();
         this.cleanUpBullets();
         this.player.update(dt);
+        this.enemies = this.enemies.filter((enemy) => !enemy.isDead);
         this.enemies.forEach((enemy) => enemy.update(dt));
         this.camera.update(dt);
     }
@@ -85,19 +111,27 @@ export default class PlayState extends State {
             this.startNextLevel();
         }
 
-        this.xpBar.render();
+        if (!this.isBossLevel) {
+            this.xpBar.render();
 
-        context.font = "100px Ubuntu";
-        context.fillText(`Stage: ${this.stage}`, 260, 90);
+            context.font = "100px Ubuntu";
+            context.fillText(`Stage: ${this.stage}`, 260, 90);
 
-        context.fillText(
-            `XP: ${this.player.attributes["xp"]} / ${this.player.attributes["xpThreshold"]}`,
-            1350,
-            90
-        );
+            context.fillText(
+                `XP: ${this.player.attributes["xp"]} / ${this.player.attributes["xpThreshold"]}`,
+                1350,
+                90
+            );
 
-        context.font = "75px Ubuntu";
-        context.fillText(`Level: ${this.player.level}`, 850, 90);
+            context.font = "75px Ubuntu";
+            context.fillText(`Level: ${this.player.level}`, 850, 90);
+        } else {
+            context.font = "100px Kungfu";
+            context.fillText(`The Mothership`, 650, 90);
+            if (this.enemies.length > 0) {
+                this.enemies[0].healthBar.render();
+            }
+        }
     }
 
     cleanUpBullets() {
@@ -111,49 +145,124 @@ export default class PlayState extends State {
                 bullet.position.y <= bounds.y + bounds.height
             );
         });
+
+        this.enemies.forEach((enemy) => {
+            enemy.bullets = enemy.bullets.filter((bullet) => {
+                return (
+                    bullet.position.x + bullet.dimensions.x >= bounds.x &&
+                    bullet.position.x <= bounds.x + bounds.width &&
+                    bullet.position.y + bullet.dimensions.y >= bounds.y &&
+                    bullet.position.y <= bounds.y + bounds.height
+                );
+            });
+        });
+    }
+
+    loadSavefile() {
+        const raw = localStorage.getItem("save");
+        if (!raw) return false;
+
+        const data = JSON.parse(raw);
+
+        this.stage = data.stage;
+
+        this.player.level = data.player.level;
+
+        // Restore attributes
+        Object.assign(this.player.attributes, data.player.attributes);
+
+        // Restore XP
+        this.player.attributes.xp = data.player.xp;
+        this.player.attributes.xpThreshold = data.player.xpThreshold;
+
+        this.player.damageOverTime = data.player.damageOverTime;
+        this.player.canFreeze = data.player.canFreeze;
+
+        this.restoreAugment(data.player.augment);
+    }
+
+    restoreAugment(augment) {
+        const augments = [
+            new Twin(),
+            new Sniper(),
+            new MachineGun(),
+            new FlankGuard(),
+        ];
+
+        switch (augment) {
+            case AugmentName.Twin:
+                augments[0].applyEffect(this.player);
+                return;
+            case AugmentName.Sniper:
+                augments[1].applyEffect(this.player);
+                return;
+
+            case AugmentName.MachineGun:
+                augments[2].applyEffect(this.player);
+                return;
+
+            case AugmentName.FlankGuard:
+                augments[3].applyEffect(this.player);
+                return;
+        }
     }
 
     startNextLevel() {
-        this.enemies = LevelMaker.GetNextLevel(this.stage++, this.player);
+        this.stage += 1;
+        this.enemies = LevelMaker.GetNextStage(this.stage, this.player);
 
         if (this.stage == 10) {
             stateStack.push(new AugmentState(this.player));
+            sounds.play(SoundName.Augment);
+        }
+
+        if (this.stage == 15) {
+            this.isBossLevel = true;
         }
     }
 
     checkOverTimeDamage(enemy) {
-        if (
-            this.player.damageOverTime == true &&
-            !enemy.isTakingOverTimeDamage
-        ) {
-            enemy.isTakingOverTimeDamage = true;
-            timer.addTask(
-                () => {
-                    enemy.damage(1);
+        if (!this.player.damageOverTime) return;
 
-                    if (enemy.attributes["health"] <= 0) {
-                        const indexToRemove = this.enemies.indexOf(enemy);
-                        this.enemies.splice(indexToRemove, 1);
-                        return;
-                    }
-                },
-                1,
-                5,
-                () => {
-                    enemy.isTakingOverTimeDamage = false;
+        if (enemy.isTakingOverTimeDamage) return;
+
+        enemy.isTakingOverTimeDamage = true;
+
+        enemy.dotTimer = timer.addTask(
+            () => {
+                if (enemy.attributes["health"] <= 0) {
+                    enemy.isDead = true;
                 }
-            );
-        }
+
+                enemy.damage(1);
+            },
+            1,
+            5,
+            () => {
+                enemy.isTakingOverTimeDamage = false;
+            }
+        );
     }
 
     checkIfEnemyDead(enemy) {
         if (enemy.attributes["health"] <= 0) {
-            const indexToRemove = this.enemies.indexOf(enemy);
-            this.enemies.splice(indexToRemove, 1);
+            enemy.isDead = true;
 
             if (this.player.gainXP(enemy.attributes["xpValue"], this.xpBar)) {
+                sounds.play(SoundName.LevelUp);
                 stateStack.push(new UpgradeState(this.player));
             }
+
+            if (enemy instanceof Mothership) {
+                stateStack.pop();
+                stateStack.push(new VictoryState());
+            }
+        }
+    }
+
+    checkIfPlayerDead(player) {
+        if (player.attributes["currentHealth"] <= 0) {
+            stateStack.push(new GameOverState());
         }
     }
 
@@ -215,13 +324,15 @@ export default class PlayState extends State {
                         getRandomPositiveInteger(0, 100) <
                         this.player.attributes["critChance"]
                     ) {
-                        console.log("Critical Hit!");
                         enemy.damage(
                             this.player.attributes["bulletDamage"] * 1.5
                         );
+                        enemy.gotCrit = true;
                     } else {
                         enemy.damage(this.player.attributes["bulletDamage"]);
                     }
+
+                    sounds.play(SoundName.Hit);
 
                     this.checkOverTimeDamage(enemy);
 
@@ -239,6 +350,9 @@ export default class PlayState extends State {
                     enemy.bullets.splice(indexToRemove, 1);
 
                     this.player.damage(enemy.attributes["bulletDamage"]);
+                    sounds.play(SoundName.Hit);
+
+                    this.checkIfPlayerDead(this.player);
                 }
             });
         });
