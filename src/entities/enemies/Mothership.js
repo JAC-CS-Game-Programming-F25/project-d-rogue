@@ -1,4 +1,3 @@
-import Images from "../../../lib/Images.js";
 import Sprite from "../../../lib/Sprite.js";
 import ProgressBar from "../../elements/ProgressBar.js";
 import ImageName from "../../enums/ImageName.js";

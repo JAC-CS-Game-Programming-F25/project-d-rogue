@@ -8,6 +8,7 @@ export default class Bullet extends GameEntity {
     static PLAYER_BULLET_SPRITE = { x: 616, y: 214, width: 15, height: 15 };
 
     constructor(x, y, angle, speed, type) {
+        // red bullet if an enemy shot it
         if (type == "enemy") {
             super(
                 x,
@@ -25,6 +26,7 @@ export default class Bullet extends GameEntity {
             );
         }
 
+        // blue bullet if an enemy shot it
         if (type == "player") {
             super(
                 x,

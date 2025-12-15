@@ -23,7 +23,6 @@ export default class PoisonShotUpgrade extends Upgrade {
     }
 
     applyEffect(player) {
-        // TODO: Change bullet color to purple
         player.damageOverTime = true;
     }
 }

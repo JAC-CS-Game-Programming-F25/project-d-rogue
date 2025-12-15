@@ -1,5 +1,7 @@
+import Animation from "../../lib/Animation.js";
+import Easing from "../../lib/Easing.js";
 import Sprite from "../../lib/Sprite.js";
-import GameEntity from "./GameEntity.js";
+import ImageName from "../enums/ImageName.js";
 import {
     CANVAS_HEIGHT,
     CANVAS_WIDTH,
@@ -7,11 +9,8 @@ import {
     images,
     timer,
 } from "../globals.js";
-import ImageName from "../enums/ImageName.js";
 import Bullet from "./Bullet.js";
-import ProgressBar from "../elements/ProgressBar.js";
-import Easing from "../../lib/Easing.js";
-import Animation from "../../lib/Animation.js";
+import GameEntity from "./GameEntity.js";
 
 export default class Enemy extends GameEntity {
     static BASIC_SPRITE = { x: 40, y: 890, width: 38, height: 27 };
@@ -59,7 +58,7 @@ export default class Enemy extends GameEntity {
     }
 
     moveAI(dt) {
-        const healtbarYOffset = 40;
+        const healthBarYOffset = 40;
 
         const enemyCenterX = this.position.x + this.dimensions.x / 2;
         const enemyCenterY = this.position.y + this.dimensions.y / 2;
@@ -69,27 +68,31 @@ export default class Enemy extends GameEntity {
         const playerCenterY =
             this.player.position.y + this.player.dimensions.y / 2;
 
-        const dx = playerCenterX - enemyCenterX;
-        const dy = playerCenterY - enemyCenterY;
+        // vector pointing from enemy to player
+        const directionX = playerCenterX - enemyCenterX;
+        const directionY = playerCenterY - enemyCenterY;
 
-        const distance = Math.hypot(dx, dy);
+        const distanceToPlayer = Math.hypot(directionX, directionY);
 
-        if (distance == 0) return;
+        if (distanceToPlayer === 0) return;
 
-        const nx = dx / distance;
-        const ny = dy / distance;
+        // normalized direction (unit vector)
+        const normalizedDirectionX = directionX / distanceToPlayer;
+        const normalizedDirectionY = directionY / distanceToPlayer;
 
-        const speed = this.attributes["movementSpeed"] * dt;
+        const movementAmount = this.attributes["movementSpeed"] * dt;
 
-        if (distance <= this.attributes["stopDistance"]) {
-            this.position.x -= nx * speed;
-            this.position.y -= ny * speed;
+        if (distanceToPlayer <= this.attributes["stopDistance"]) {
+            // move away from the player
+            this.position.x -= normalizedDirectionX * movementAmount;
+            this.position.y -= normalizedDirectionY * movementAmount;
         } else {
-            this.position.x += nx * speed;
-            this.position.y += ny * speed;
+            // move toward the player
+            this.position.x += normalizedDirectionX * movementAmount;
+            this.position.y += normalizedDirectionY * movementAmount;
         }
 
-        // Clamp enemy inside screen
+        // clamp enemy inside the screen
         this.position.x = Math.max(
             0,
             Math.min(CANVAS_WIDTH - this.dimensions.x, this.position.x)
@@ -101,16 +104,16 @@ export default class Enemy extends GameEntity {
 
         this.healthBar.position.x = this.position.x;
         this.healthBar.position.y =
-            this.position.y + this.dimensions.y + healtbarYOffset;
+            this.position.y + this.dimensions.y + healthBarYOffset;
     }
 
     render() {
-        const cx = this.position.x + this.dimensions.x / 2;
-        const cy = this.position.y + this.dimensions.y / 2;
+        const centerX = this.position.x + this.dimensions.x / 2;
+        const centerY = this.position.y + this.dimensions.y / 2;
 
         context.save();
 
-        context.translate(cx, cy);
+        context.translate(centerX, centerY);
 
         context.rotate(this.angle);
 
@@ -149,6 +152,7 @@ export default class Enemy extends GameEntity {
 
         this.angle = Math.atan2(dy, dx);
 
+        // always move enemy
         this.moveAI(dt);
 
         if (this.isShooting == false) {
@@ -161,6 +165,7 @@ export default class Enemy extends GameEntity {
             });
         }
 
+        // play explosion animation if enemy got crit
         if (this.gotCrit) {
             this.critAnimation.update(dt);
 
@@ -185,13 +190,13 @@ export default class Enemy extends GameEntity {
     }
 
     shoot() {
-        const cx = this.position.x + this.dimensions.x / 2;
-        const cy = this.position.y + this.dimensions.y / 2;
+        const centerX = this.position.x + this.dimensions.x / 2;
+        const centerY = this.position.y + this.dimensions.y / 2;
 
         const muzzleOffset = 40;
 
-        const muzzleX = cx + Math.cos(this.angle) * muzzleOffset;
-        const muzzleY = cy + Math.sin(this.angle) * muzzleOffset;
+        const muzzleX = centerX + Math.cos(this.angle) * muzzleOffset;
+        const muzzleY = centerY + Math.sin(this.angle) * muzzleOffset;
 
         if (this.isShooting == false) {
             this.isShooting = true;

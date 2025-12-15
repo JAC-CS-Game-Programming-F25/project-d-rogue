@@ -4,16 +4,6 @@ import UIElement from "./UIElement.js";
 import UpgradePanel from "./UpgradePanel.js";
 
 export default class AugmentPanel extends UIElement {
-    /**
-     * A UI element that is simply a rectangle that
-     * other UI elements are placed on top of.
-     *
-     * @param {number} x
-     * @param {number} y
-     * @param {number} width
-     * @param {number} height
-     * @param {object} options
-     */
     constructor(x, y, width, height, augment, color) {
         super(x, y, width, height);
 
@@ -37,6 +27,8 @@ export default class AugmentPanel extends UIElement {
         context.save();
         this.renderBackground();
         this.renderForeground();
+
+        // only render the upgrade itself at the end of the tween
         if (this.tweening) {
             this.renderUpgrade();
         }
@@ -78,7 +70,7 @@ export default class AugmentPanel extends UIElement {
         context.fillStyle = this.fontColour;
         context.font = `bold 50px Ubuntu`;
 
-        const title = this.augment.name ?? "";
+        const title = this.augment.name;
         const titleWidth = context.measureText(title).width;
         const titleX = panelX + (panelWidth - titleWidth) / 2;
 

@@ -23,9 +23,14 @@ export default class Sniper extends Augment {
     }
 
     applyEffect(player) {
+        // change sprite
         player.sprite = this.image;
+
+        // change dimensions
         player.dimensions.width = Sniper.SNIPER_SPRITE.width;
         player.dimensions.height = Sniper.SNIPER_SPRITE.height;
+
+        // upgrade tank
         player.attributes["bulletSpeed"] = 500;
         player.attributes["bulletDamage"] += 3;
         player.attributes["reloadSpeed"] += 1;

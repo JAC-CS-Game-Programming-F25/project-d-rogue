@@ -1,8 +1,7 @@
-import { CameraSettings } from "../../src/config/CameraConfig.js";
-import { PlayerConfig } from "../../src/config/PlayerConfig.js";
-import Vector from "../../lib/Vector.js";
-import { canvas, input, VIEWPORT_HEIGHT, VIEWPORT_WIDTH } from "../globals.js";
 import Input from "../../lib/Input.js";
+import Vector from "../../lib/Vector.js";
+import { CameraSettings } from "../../src/config/CameraConfig.js";
+import { canvas, input, VIEWPORT_HEIGHT, VIEWPORT_WIDTH } from "../globals.js";
 
 /**
  * Represents a camera that follows the player in a 2D game world.
@@ -196,6 +195,9 @@ export default class Camera {
         };
     }
 
+    /**
+     * Gets the current bounds of the camera.
+     */
     getBounds() {
         return {
             x: this.position.x,

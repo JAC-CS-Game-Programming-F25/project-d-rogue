@@ -23,7 +23,6 @@ export default class FireShotUpgrade extends Upgrade {
     }
 
     applyEffect(player) {
-        // TODO: Change bullet color to orange
         player.damageOverTime = true;
     }
 }

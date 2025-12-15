@@ -23,10 +23,17 @@ export default class MachineGun extends Augment {
     }
 
     applyEffect(player) {
+        // change sprite
         player.sprite = this.image;
+
+        // change dimensions
         player.dimensions.width = MachineGun.MACHINEGUN_SPRITE.width;
         player.dimensions.height = MachineGun.MACHINEGUN_SPRITE.height;
+
+        // upgrade tank
         player.attributes["reloadSpeed"] = 0.2;
+
+        // change augment
         player.augment = this.name;
     }
 }

@@ -1,8 +1,8 @@
 import Sprite from "../../../lib/Sprite.js";
-import ImageName from "../../enums/ImageName.js";
-import { context, images } from "../../globals.js";
-import Enemy from "../Enemy.js";
 import ProgressBar from "../../elements/ProgressBar.js";
+import ImageName from "../../enums/ImageName.js";
+import { images } from "../../globals.js";
+import Enemy from "../Enemy.js";
 
 export default class ShotgunEnemy extends Enemy {
     constructor(x, y, player) {

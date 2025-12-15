@@ -1,19 +1,6 @@
 import Input from "../../lib/Input.js";
-import Sprite from "../../lib/Sprite.js";
 import State from "../../lib/State.js";
-import StateStack from "../../lib/StateStack.js";
-import Mothership from "../entities/enemies/Mothership.js";
-import Player from "../entities/Player.js";
-import ImageName from "../enums/ImageName.js";
-import {
-    CANVAS_HEIGHT,
-    CANVAS_WIDTH,
-    context,
-    images,
-    input,
-    stateStack,
-} from "../globals.js";
-import PlayState from "./PlayState.js";
+import { context, input, stateStack } from "../globals.js";
 
 export default class GameOverState extends State {
     constructor() {

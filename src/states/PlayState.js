@@ -1,5 +1,5 @@
 import Input from "../../lib/Input.js";
-import { getRandomPositiveInteger, oneInXChance } from "../../lib/Random.js";
+import { getRandomPositiveInteger } from "../../lib/Random.js";
 import Sprite from "../../lib/Sprite.js";
 import State from "../../lib/State.js";
 import FlankGuard from "../augments/FlankGuard.js";
@@ -10,28 +10,26 @@ import ProgressBar from "../elements/ProgressBar.js";
 import Mothership from "../entities/enemies/Mothership.js";
 import Player from "../entities/Player.js";
 import { AugmentName } from "../enums/AugmentName.js";
-import GameStateName from "../enums/GameStateName.js";
 import ImageName from "../enums/ImageName.js";
 import { SoundName } from "../enums/SoundName.js";
 import {
     CANVAS_HEIGHT,
     CANVAS_WIDTH,
-    images,
     context,
-    VIEWPORT_WIDTH,
-    VIEWPORT_HEIGHT,
-    stateStack,
-    timer,
+    images,
     input,
     saveState,
     sounds,
+    stateStack,
+    timer,
+    VIEWPORT_HEIGHT,
+    VIEWPORT_WIDTH,
 } from "../globals.js";
 import Camera from "../services/Camera.js";
 import LevelMaker from "../services/LevelMaker.js";
 import AugmentState from "./AugmentState.js";
 import GameOverState from "./GameOverState.js";
 import PauseState from "./PauseState.js";
-import PauseStates from "./PauseState.js";
 import UpgradeState from "./UpgradeState.js";
 import VictoryState from "./VictoryState.js";
 
@@ -41,7 +39,7 @@ export default class PlayState extends State {
 
         this.scale = 2;
 
-        this.stage = 13;
+        this.stage = 1;
 
         this.player = new Player(
             VIEWPORT_WIDTH / 2 - Player.BASIC_SPRITE.width / 2,
@@ -111,6 +109,7 @@ export default class PlayState extends State {
             this.startNextLevel();
         }
 
+        // only render mothership stuff if its the right stage
         if (!this.isBossLevel) {
             this.xpBar.render();
 
@@ -164,17 +163,20 @@ export default class PlayState extends State {
 
         const data = JSON.parse(raw);
 
+        // restore stage
         this.stage = data.stage;
 
+        // restore level
         this.player.level = data.player.level;
 
-        // Restore attributes
+        // restore attributes
         Object.assign(this.player.attributes, data.player.attributes);
 
-        // Restore XP
+        // restore XP
         this.player.attributes.xp = data.player.xp;
         this.player.attributes.xpThreshold = data.player.xpThreshold;
 
+        // restore bullet type upgrades
         this.player.damageOverTime = data.player.damageOverTime;
         this.player.canFreeze = data.player.canFreeze;
 
@@ -228,7 +230,7 @@ export default class PlayState extends State {
 
         enemy.isTakingOverTimeDamage = true;
 
-        enemy.dotTimer = timer.addTask(
+        timer.addTask(
             () => {
                 if (enemy.attributes["health"] <= 0) {
                     enemy.isDead = true;
@@ -248,11 +250,13 @@ export default class PlayState extends State {
         if (enemy.attributes["health"] <= 0) {
             enemy.isDead = true;
 
+            // if enemy leveled up
             if (this.player.gainXP(enemy.attributes["xpValue"], this.xpBar)) {
                 sounds.play(SoundName.LevelUp);
                 stateStack.push(new UpgradeState(this.player));
             }
 
+            // if the killed enemy was the mothership, make player win
             if (enemy instanceof Mothership) {
                 stateStack.pop();
                 stateStack.push(new VictoryState());
@@ -268,6 +272,7 @@ export default class PlayState extends State {
 
     checkFreezeEnemy(enemy) {
         if (this.player.canFreeze == true) {
+            // half enemy speed
             enemy.attributes["movementSpeed"] =
                 enemy.attributes["movementSpeed"] / 2;
 
@@ -276,6 +281,7 @@ export default class PlayState extends State {
                 5,
                 5,
                 () => {
+                    // set speed back to normal after 5 seconds
                     enemy.attributes["movementSpeed"] =
                         enemy.attributes["movementSpeed"] * 2;
                 }
@@ -286,11 +292,9 @@ export default class PlayState extends State {
     drawBackground(context, camera) {
         const bounds = camera.getBounds();
 
-        // Base color
         context.fillStyle = "#ffffffff";
         context.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
 
-        // Grid
         const gridSize = 45;
         context.strokeStyle = "#c2c2c2ff";
         context.lineWidth = 2;
@@ -314,6 +318,7 @@ export default class PlayState extends State {
     }
 
     checkCollisions() {
+        // enemy colliding with player bullets
         this.player.bullets.forEach((bullet) => {
             this.enemies.forEach((enemy) => {
                 if (enemy.isCollidingWith(bullet)) {
@@ -343,6 +348,7 @@ export default class PlayState extends State {
             });
         });
 
+        // enemy bullets colliding with enemy
         this.enemies.forEach((enemy) => {
             enemy.bullets.forEach((bullet) => {
                 if (this.player.isCollidingWith(bullet)) {

@@ -1,21 +1,12 @@
-import Sprite from "../../lib/Sprite.js";
-import GameEntity from "./GameEntity.js";
-import {
-    CANVAS_WIDTH,
-    context,
-    images,
-    input,
-    stateStack,
-    timer,
-} from "../globals.js";
-import ImageName from "../enums/ImageName.js";
-import { PlayerConfig } from "../config/PlayerConfig.js";
-import Input from "../../lib/Input.js";
-import Bullet from "./Bullet.js";
-import ProgressBar from "../elements/ProgressBar.js";
-import GameStateName from "../enums/GameStateName.js";
 import Easing from "../../lib/Easing.js";
-import Animation from "../../lib/Animation.js";
+import Input from "../../lib/Input.js";
+import Sprite from "../../lib/Sprite.js";
+import { PlayerConfig } from "../config/PlayerConfig.js";
+import ProgressBar from "../elements/ProgressBar.js";
+import ImageName from "../enums/ImageName.js";
+import { CANVAS_WIDTH, context, images, input, timer } from "../globals.js";
+import Bullet from "./Bullet.js";
+import GameEntity from "./GameEntity.js";
 
 export default class Player extends GameEntity {
     static BASIC_SPRITE = { x: 24, y: 30, width: 68, height: 48 };
@@ -32,7 +23,7 @@ export default class Player extends GameEntity {
 
         this.attributes = {
             reloadSpeed: 1,
-            bulletDamage: 20,
+            bulletDamage: 2,
             bulletSpeed: 300,
             currentHealth: 15,
             maxHealth: 15,
@@ -62,7 +53,7 @@ export default class Player extends GameEntity {
         // Player has freeze shot upgrade
         this.canFreeze = false;
 
-        // Angle of the player and the mouse (in radians)
+        // Angle of the player depending on the mouse position(in radians)
         this.angle = 0;
 
         this.bullets = [];
@@ -100,13 +91,10 @@ export default class Player extends GameEntity {
     }
 
     gainXP(xp, xpBar) {
-        // Add XP
         this.attributes["xp"] += xp;
 
-        // Update the ProgressBar's logical value
         xpBar.currentValue = this.attributes["xp"];
 
-        // Tween the displayValue to match the current XP
         timer.tween(
             xpBar,
             { displayValue: xpBar.currentValue },
@@ -114,30 +102,25 @@ export default class Player extends GameEntity {
             Easing.easeOutQuad
         );
 
-        // Handle level up
         if (this.attributes["xp"] >= this.attributes["xpThreshold"]) {
-            this.attributes["xp"] = 0; // reset XP
-            xpBar.currentValue = 0; // reset logical bar value
+            // reset xp
+            this.attributes["xp"] = 0;
+            xpBar.currentValue = 0;
 
             // Increase threshold
             this.attributes["xpThreshold"] += 30;
             xpBar.maxValue = this.attributes["xpThreshold"];
 
-            // Tween the displayValue down to 0 (smoothly empty the bar)
+            // Tween the displayValue down to 0 so there is no overflow
             timer.tween(xpBar, { displayValue: 0 }, 0.3, Easing.easeOutQuad);
 
-            this.level += 1; // increase player level
+            this.level += 1;
             return true;
         }
 
         return false;
     }
 
-    /**
-     * Handles movement of the player.
-     * This method updates the player's velocity based on input
-     * and applies acceleration, deceleration, and speed limits.
-     */
     handleMovement() {
         if (input.isKeyHeld(Input.KEYS.A) && input.isKeyHeld(Input.KEYS.D)) {
             this.slowDown();
@@ -186,15 +169,15 @@ export default class Player extends GameEntity {
     }
 
     shootBasic() {
-        const cx = this.position.x + this.dimensions.x / 2;
-        const cy = this.position.y + this.dimensions.y / 2;
+        const centerX = this.position.x + this.dimensions.x / 2;
+        const centerY = this.position.y + this.dimensions.y / 2;
 
         const muzzleOffset = 40;
 
         this.isShooting = true;
 
-        const muzzleX = cx + Math.cos(this.angle) * muzzleOffset;
-        const muzzleY = cy + Math.sin(this.angle) * muzzleOffset;
+        const muzzleX = centerX + Math.cos(this.angle) * muzzleOffset;
+        const muzzleY = centerY + Math.sin(this.angle) * muzzleOffset;
 
         this.bullets.push(
             new Bullet(
@@ -215,19 +198,20 @@ export default class Player extends GameEntity {
     }
 
     shootFlankGuard() {
-        const cx = this.position.x + this.dimensions.x / 2;
-        const cy = this.position.y + this.dimensions.y / 2;
+        const centerX = this.position.x + this.dimensions.x / 2;
+        const centerY = this.position.y + this.dimensions.y / 2;
 
         const muzzleOffset = 40;
 
+        // both angles bullet will come from (0 degrees and 180 degrees)
         const angles = [this.angle, this.angle + Math.PI];
 
         if (!this.isShooting) {
             this.isShooting = true;
 
             angles.forEach((angle) => {
-                const muzzleX = cx + Math.cos(angle) * muzzleOffset;
-                const muzzleY = cy + Math.sin(angle) * muzzleOffset;
+                const muzzleX = centerX + Math.cos(angle) * muzzleOffset;
+                const muzzleY = centerY + Math.sin(angle) * muzzleOffset;
 
                 this.bullets.push(
                     new Bullet(
@@ -250,37 +234,47 @@ export default class Player extends GameEntity {
     }
 
     shootTwin() {
-        const cx = this.position.x + this.dimensions.x / 2;
-        const cy = this.position.y + this.dimensions.y / 2;
+        const centerX = this.position.x + this.dimensions.x / 2;
+        const centerY = this.position.y + this.dimensions.y / 2;
 
-        const muzzleOffset = 40; // forward barrel length
-        const barrelSpacing = 25; // distance between barrels
+        const muzzleOffset = 40;
+        const barrelSpacing = 25;
 
-        const fx = Math.cos(this.angle);
-        const fy = Math.sin(this.angle);
+        // forward direction (where the player is aiming)
+        const forwardX = Math.cos(this.angle);
+        const forwardY = Math.sin(this.angle);
 
-        const px = -Math.sin(this.angle);
-        const py = Math.cos(this.angle);
+        // perpendicular direction (left/right of aim)
+        const perpendicularX = -Math.sin(this.angle);
+        const perpendicularY = Math.cos(this.angle);
 
         if (!this.isShooting) {
             this.isShooting = true;
 
-            // Left barrel
+            // left barrel
             this.bullets.push(
                 new Bullet(
-                    cx + fx * muzzleOffset - px * barrelSpacing,
-                    cy + fy * muzzleOffset - py * barrelSpacing,
+                    centerX +
+                        forwardX * muzzleOffset -
+                        perpendicularX * barrelSpacing,
+                    centerY +
+                        forwardY * muzzleOffset -
+                        perpendicularY * barrelSpacing,
                     this.angle,
                     this.attributes["bulletSpeed"],
                     "player"
                 )
             );
 
-            // Right barrel
+            // right barrel
             this.bullets.push(
                 new Bullet(
-                    cx + fx * muzzleOffset + px * barrelSpacing,
-                    cy + fy * muzzleOffset + py * barrelSpacing,
+                    centerX +
+                        forwardX * muzzleOffset +
+                        perpendicularX * barrelSpacing,
+                    centerY +
+                        forwardY * muzzleOffset +
+                        perpendicularY * barrelSpacing,
                     this.angle,
                     this.attributes["bulletSpeed"],
                     "player"
@@ -347,7 +341,7 @@ export default class Player extends GameEntity {
      * @param {number} dt - Delta time (time since last update).
      */
     updatePosition(dt) {
-        // Calculate position change
+        // calculate position change
         const dx = this.velocity.x * dt;
         const dy = this.velocity.y * dt;
 
@@ -376,12 +370,12 @@ export default class Player extends GameEntity {
     }
 
     render() {
-        const cx = this.position.x + this.dimensions.x / 2;
-        const cy = this.position.y + this.dimensions.y / 2;
+        const centerX = this.position.x + this.dimensions.x / 2;
+        const centerY = this.position.y + this.dimensions.y / 2;
 
         context.save();
 
-        context.translate(cx, cy);
+        context.translate(centerX, centerY);
 
         context.rotate(this.angle);
 

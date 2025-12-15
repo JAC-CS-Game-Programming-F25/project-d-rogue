@@ -6,8 +6,8 @@ export default class ProgressBar extends UIElement {
         super(x, y, width, height);
 
         this.maxValue = maxValue;
-        this.currentValue = currentValue; // actual HP
-        this.displayValue = currentValue; // animated HP bar
+        this.currentValue = currentValue;
+        this.displayValue = currentValue; // display value is used for tweens
         this.color = color;
     }
 

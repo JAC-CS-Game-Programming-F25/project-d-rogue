@@ -1,9 +1,7 @@
 import Input from "../../lib/Input.js";
 import Sprite from "../../lib/Sprite.js";
 import State from "../../lib/State.js";
-import StateStack from "../../lib/StateStack.js";
 import Mothership from "../entities/enemies/Mothership.js";
-import Player from "../entities/Player.js";
 import ImageName from "../enums/ImageName.js";
 import { SoundName } from "../enums/SoundName.js";
 import {
@@ -55,6 +53,7 @@ export default class TitleScreenState extends State {
             input.isKeyPressed(Input.KEYS.W) ||
             input.isKeyPressed(Input.KEYS.S)
         ) {
+            // only allow movement if the player has a previous save
             if (this.hasSave) {
                 sounds.play(SoundName.Cursor);
                 this.highlighted =
@@ -64,7 +63,6 @@ export default class TitleScreenState extends State {
             }
         }
 
-        // Confirm whichever option we have selected to change screens.
         if (input.isKeyPressed(Input.KEYS.ENTER)) {
             if (this.highlighted === this.menuOptions.new) {
                 saveState.loadData = false;
@@ -98,7 +96,6 @@ export default class TitleScreenState extends State {
         context.strokeText(`D-ROGUE`, 1000, 300);
         context.font = "150px Ubuntu";
 
-        // Set the fill style based on which option is highlighted.
         context.fillStyle =
             this.highlighted === this.menuOptions.new
                 ? "cornflowerblue"
@@ -108,6 +105,7 @@ export default class TitleScreenState extends State {
             CANVAS_WIDTH * 0.5,
             CANVAS_HEIGHT * 0.8
         );
+        // add border around text
         context.strokeText(
             `${this.menuOptions.new}`,
             CANVAS_WIDTH * 0.5,

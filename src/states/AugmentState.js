@@ -7,7 +7,15 @@ import Sniper from "../augments/Sniper.js";
 import Twin from "../augments/Twin.js";
 import AugmentPanel from "../elements/AugmentPanel.js";
 import { SoundName } from "../enums/SoundName.js";
-import { context, input, sounds, stateStack, timer } from "../globals.js";
+import {
+    CANVAS_HEIGHT,
+    CANVAS_WIDTH,
+    context,
+    input,
+    sounds,
+    stateStack,
+    timer,
+} from "../globals.js";
 
 export default class AugmentState extends State {
     constructor(player) {
@@ -61,9 +69,6 @@ export default class AugmentState extends State {
         const panelWidth = this.augmentBoxes[0].dimensions.x;
         const panelHeight = this.augmentBoxes[0].dimensions.y;
 
-        const canvasW = context.canvas.width;
-        const canvasH = context.canvas.height;
-
         const gap = 100;
 
         // Compute total grid width/height
@@ -71,10 +76,9 @@ export default class AugmentState extends State {
         const totalH = panelHeight * 2 + gap;
 
         // Top-left coordinate of the grid
-        const startX = (canvasW - totalW) / 2;
-        const startY = (canvasH - totalH) / 2;
+        const startX = (CANVAS_WIDTH - totalW) / 2;
+        const startY = (CANVAS_HEIGHT - totalH) / 2;
 
-        // Target positions for each panel
         const targets = [
             { x: startX, y: startY }, // top-left
             { x: startX + panelWidth + gap, y: startY }, // top-right
@@ -94,7 +98,7 @@ export default class AugmentState extends State {
                 Easing.easeOutQuad
             );
 
-            box.tweening = true; // show upgrade info after landing
+            box.tweening = true;
         }
     }
 
@@ -116,6 +120,7 @@ export default class AugmentState extends State {
     }
 
     updateSelection() {
+        // move left
         if (input.isKeyPressed(Input.KEYS.A)) {
             this.selectedIndex--;
             if (this.selectedIndex < 0) {
@@ -124,6 +129,7 @@ export default class AugmentState extends State {
             sounds.play(SoundName.Cursor);
         }
 
+        // move right
         if (input.isKeyPressed(Input.KEYS.D)) {
             this.selectedIndex++;
             if (this.selectedIndex > this.augmentBoxes.length - 1) {
